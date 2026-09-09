@@ -1,0 +1,47 @@
+{
+  "title": "Churn Platform — Continuous Training & Monitoring",
+  "uid": "churn-platform-overview",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "15s",
+  "time": { "from": "now-6h", "to": "now" },
+  "panels": [
+    {
+      "id": 1, "title": "Predict request rate", "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [{ "expr": "sum(rate(churn_prediction_requests_total[5m])) by (model, model_version, status)", "legendFormat": "{{model}} v{{model_version}} {{status}}" }]
+    },
+    {
+      "id": 2, "title": "P95 inference latency", "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [{ "expr": "histogram_quantile(0.95, sum(rate(churn_prediction_latency_seconds_bucket[5m])) by (le, model, model_version))", "legendFormat": "{{model}} v{{model_version}}" }],
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] }
+    },
+    {
+      "id": 3, "title": "Average churn probability (model confidence)", "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [{ "expr": "churn_model_confidence_avg", "legendFormat": "{{model}} v{{model_version}}" }],
+      "fieldConfig": { "defaults": { "unit": "percentunit", "min": 0, "max": 1 }, "overrides": [] }
+    },
+    {
+      "id": 4, "title": "Max feature PSI (drift)", "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [{ "expr": "churn_drift_psi_max", "legendFormat": "{{model}}" }],
+      "fieldConfig": { "defaults": { "thresholds": { "steps": [
+        { "color": "green", "value": null },
+        { "color": "orange", "value": 0.10 },
+        { "color": "red", "value": 0.25 }
+      ] } }, "overrides": [] }
+    },
+    {
+      "id": 5, "title": "Prediction errors", "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "targets": [{ "expr": "sum(rate(churn_prediction_errors_total[5m])) by (model, model_version)", "legendFormat": "{{model}} v{{model_version}}" }]
+    },
+    {
+      "id": 6, "title": "Training runs by outcome", "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "targets": [{ "expr": "sum(rate(churn_training_runs_total[15m])) by (model, status)", "legendFormat": "{{model}} {{status}}" }]
+    }
+  ]
+}

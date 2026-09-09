@@ -1,0 +1,60 @@
+{
+  "generated_at": "2026-09-07T04:39:22.740827+00:00",
+  "profile": "severe_drift",
+  "methodology_note": "All three approaches use the same 16-stage training pipeline and the same scenario='feature_drift' data generator (different run_id -> different sampled instance of the same drift distribution per approach, not byte-identical data \u2014 see Section 6.1/9 limitations). Monitoring profile for this run: 'severe_drift'.",
+  "approach_c": {
+    "approach": "C - Closed-loop",
+    "detection_time_seconds_measured": 0.0,
+    "detection_time_note": "Live check-call latency measured at 0.12s. In production this check runs on a */30 * * * * schedule (monitoring_pipeline_dag.py), so real-world drift-onset-to-check latency averages 15 min (max 30 min) \u2014 analytical, not measured here.",
+    "drift_level": "HIGH",
+    "evaluation_level": "GOOD",
+    "overall_status": "WARNING",
+    "triggered_retrain_live": false,
+    "total_call_latency_seconds": 0.12,
+    "operational_human_actions": 0,
+    "recovery_time_seconds": null,
+    "note": "Auto-retrain did NOT fire on this live check (should_retrain()==False for the observed drift_level/evaluation_level combination) \u2014 consistent with Paper A/B's earlier observed limitation that severe_drift does not reliably yield evaluation_level=BAD against the current champion. Supplementary measurement below force-triggers the same trigger_type='drift' pipeline directly so the recovery-time component can still be reported.",
+    "supplementary_forced_recovery_time_seconds": 17.34,
+    "supplementary_forced_outcome": {
+      "pipeline_status": "REJECTED",
+      "pipeline_outcome": "MODEL_NOT_PROMOTED",
+      "candidate_test_f1": 0.7579,
+      "production_f1_after": 0.7948717948717948,
+      "promoted": false,
+      "gate_reasons": "candidate recall 0.727 below champion recall 0.979",
+      "gate_regression_pct": 4.65
+    }
+  },
+  "approach_b": {
+    "approach": "B - Scheduled (weekly)",
+    "detection_time_seconds_measured": null,
+    "detection_time_note": "Not applicable/not live-measured: Approach B retrains on a fixed 0 2 * * 0 cron (training_pipeline_dag.py) regardless of drift state, so 'detection' is really 'wait for next scheduled slot' \u2014 average 3.5 days, max 7 days. Analytical, not measured here.",
+    "recovery_time_seconds": 15.256,
+    "operational_human_actions": 0,
+    "pipeline_status": "REJECTED",
+    "pipeline_outcome": "MODEL_NOT_PROMOTED",
+    "candidate_test_f1": 0.7807,
+    "production_f1_after": 0.7948717948717948,
+    "promoted": false,
+    "gate_reasons": "candidate recall 0.768 below champion recall 0.979",
+    "gate_regression_pct": 1.78
+  },
+  "approach_a": {
+    "approach": "A - Manual",
+    "polls_before_notice": 1,
+    "noticed_status": "WARNING",
+    "detection_polling_time_seconds_measured": 0.064,
+    "simulated_decision_latency_seconds": 8.0,
+    "detection_time_seconds_measured": 8.064,
+    "detection_time_note": "Polling interval (5.0s) and decision latency (8.0s) are explicitly compressed, documented proxies for a real operator's check cadence/response time, not empirically observed human behavior \u2014 the polling loop and pipeline execution themselves are real.",
+    "recovery_time_seconds": 29.611,
+    "operational_human_actions": 2,
+    "pipeline_status": "REJECTED",
+    "pipeline_outcome": "MODEL_NOT_PROMOTED",
+    "candidate_test_f1": 0.8468,
+    "production_f1_after": 0.7948717948717948,
+    "promoted": false,
+    "gate_reasons": "candidate recall 0.922 below champion recall 0.979",
+    "gate_regression_pct": -6.54
+  }
+}

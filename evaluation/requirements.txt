@@ -1,0 +1,3 @@
+radon>=6.0.1
+requests>=2.32.0
+matplotlib>=3.9.0

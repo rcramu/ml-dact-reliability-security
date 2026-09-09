@@ -1,0 +1,33 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch: {}
+
+exporters:
+  debug:
+    verbosity: detailed
+  splunk_hec:
+    token: "22222222-2222-2222-2222-222222222222"
+    endpoint: "https://splunk:8088/services/collector"
+    source: "otel-collector"
+    sourcetype: "otel:traces"
+    index: "churn_platform"
+    tls:
+      insecure_skip_verify: true
+    retry_on_failure:
+      enabled: true
+    sending_queue:
+      enabled: true
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, splunk_hec]
