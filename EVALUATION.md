@@ -19,6 +19,7 @@ Companion deposit for **Reliability and Security Evaluation of a Closed-Loop MLO
     make_figures.py            writes figures/*.png from results/ JSON
     make_cascade_figure.py     Figure 8: orphaned-transaction cascade
     make_stride_figure.py      Figure 5: STRIDE severity map
+    make_graphical_abstract.py JSS graphical abstract (measured numbers only)
     results/                   captured JSON used in the paper
     requirements.txt           radon, requests, matplotlib
   figures/
@@ -26,6 +27,7 @@ Companion deposit for **Reliability and Security Evaluation of a Closed-Loop MLO
     figure2_abc_comparison.png
     figure3_orphaned_transaction_cascade.png
     figure4_stride_severity.png
+    graphical-abstract.png / graphical-abstract.pdf
 ```
 
 ## Running against a live stack
