@@ -1,0 +1,152 @@
+export const CONCEPTS = [
+  {
+    id: 'airflow_orchestration',
+    title: 'Airflow Orchestration',
+    subtitle: 'What runs, in what order, on what schedule',
+    summary: 'Airflow decides what needs to run, in what order, when, and under what conditions. Three DAGs drive this platform: data_ingestion (daily), training_pipeline (weekly, or on-demand), and monitoring_pipeline (every 30 minutes) — each is a thin wrapper that calls the backend API and inspects the result.',
+    illustration: 'airflow',
+    flashcard: {
+      emoji: '🗓️',
+      question: 'Why does Airflow call the backend API instead of doing the training itself?',
+      takeaway: '"Airflow orchestrates; it doesn\'t have to do the heavy computation itself." The DAG is thin — it schedules, retries, and inspects — while the backend owns the real 16-stage pipeline.',
+      try_it: 'Open the Pipeline Runs tab and trigger a manual run — it produces the exact same stages a scheduled Airflow DAG run would.',
+    },
+    example: {
+      title: 'The three DAGs in this platform',
+      steps: [
+        'data_ingestion (@daily): fetch_customer_data -> write_to_s3_and_validate -> publish_dataset',
+        'training_pipeline (weekly, cron 0 2 * * 0): trigger_training_pipeline -> alert_if_rejected',
+        'monitoring_pipeline (every 30 min): check_drift -> alert_if_required (may auto-trigger training_pipeline)',
+      ],
+    },
+  },
+  {
+    id: 'training_dag',
+    title: 'The 16-Stage Training DAG',
+    subtitle: 'From raw data to a promoted production model',
+    summary: 'One call to POST /training runs all 16 stages synchronously: check_new_dataset, validate_data, check_volume_anomaly, write_to_s3, feature_engineering, split_dataset, train_pytorch, log_mlflow, evaluate_model, compare_champion, quality_gate, register_model, deploy_stage, smoke_test, deploy_production, publish_metrics.',
+    illustration: 'training_dag',
+    flashcard: {
+      emoji: '🧬',
+      question: 'What happens to a run that gets BLOCKED at check_volume_anomaly?',
+      takeaway: 'Every remaining stage is marked SKIPPED, the run status becomes BLOCKED, and a CRITICAL alert fires — training never proceeds on suspiciously incomplete data.',
+      try_it: 'Trigger the "volume_anomaly" scenario in Pipeline Runs and watch the stage stepper stop early.',
+    },
+    example: {
+      title: 'Stage-by-stage for a "healthy" run',
+      steps: [
+        'check_new_dataset: generate a fresh, seeded batch of ~1,200 customer rows',
+        'validate_data: 5 Great-Expectations-style checks (schema, nulls, labels, class balance, freshness)',
+        'train_pytorch: a small feed-forward MLP learns tenure/charges/tickets/usage patterns',
+        'quality_gate: candidate metrics must clear F1/precision/recall floors AND not regress vs. champion',
+        'deploy_production: canary rollout (stage -> smoke_test -> canary_5/25/50/100 -> production)',
+      ],
+    },
+  },
+  {
+    id: 'quality_gate',
+    title: 'The Automated Quality Gate',
+    subtitle: 'Never promote a worse model',
+    summary: 'A candidate must clear absolute floors (minimum F1/precision/recall) AND must not regress more than a configured percentage below the current production champion\'s F1 — protecting production from both weak first models and silent decay.',
+    illustration: 'quality_gate',
+    flashcard: {
+      emoji: '🚦',
+      question: 'A candidate scores F1=0.72 but the champion scores F1=0.90 — does it pass?',
+      takeaway: 'No — 0.72 is a ~20% regression, far above the ~10% budget, so the gate FAILS even though 0.72 clears the absolute minimum. Both checks must pass.',
+      try_it: 'Trigger the "regression" scenario in Pipeline Runs — heavy label noise reliably fails the gate.',
+    },
+    example: {
+      title: 'The gate\'s two questions',
+      steps: [
+        '1. Does the candidate clear absolute floors? (F1 >= 0.65, recall >= 0.55, precision >= 0.55)',
+        '2. Is the candidate\'s F1 within 10% of the current champion\'s F1?',
+        'PASS -> register_model -> canary deploy -> production',
+        'FAIL -> candidate rejected, champion stays in production, alert fires',
+      ],
+    },
+  },
+  {
+    id: 'mlflow_registry',
+    title: 'MLflow Tracking & Model Registry',
+    subtitle: 'Every run remembered, every promotion traceable',
+    summary: 'Every training run logs its parameters, metrics, and framework to its own MLflow run. Only candidates that PASS the quality gate get registered as a real MLflow Model Registry version, then transitioned between Staging/Production/Archived as promotions and rollbacks happen.',
+    illustration: 'mlflow_registry',
+    flashcard: {
+      emoji: '🧪',
+      question: 'Does a REJECTED candidate get an MLflow registry version number?',
+      takeaway: 'No — register_model only runs after the quality gate PASSes. Rejected candidates keep an internal ModelVersion row (for audit) but never touch the MLflow Model Registry.',
+      try_it: 'Open MLflow from the footer link and compare the run count to the registered-version count in Model Registry.',
+    },
+    example: {
+      title: 'Experiment -> Run -> Registry',
+      steps: [
+        'Experiment: customer-churn (one shared MLflow experiment)',
+        'Run: one per training attempt, tagged with trigger_type and scenario',
+        'Registry: only PASS-ing runs get create_model_version() called',
+        'Stage transitions: Production <-> Archived move automatically on promote/rollback',
+      ],
+    },
+  },
+  {
+    id: 'canary_deploy',
+    title: 'Canary Deployment & Rollback',
+    subtitle: 'Roll out gradually, roll back instantly',
+    summary: 'A promoted model walks through stage -> smoke_test -> canary_5 -> canary_25 -> canary_50 -> canary_100 -> production (simulating a KubernetesPodOperator-driven EKS rollout). If production quality regresses afterward, rollback restores the previous archived champion in one call.',
+    illustration: 'canary_deploy',
+    flashcard: {
+      emoji: '🐤',
+      question: 'What does rollback actually change?',
+      takeaway: 'The current champion is marked "rolled_back" and demoted; the most recent "archived" version is promoted back to "production" and marked champion again — a single reversible operation, not a new training run.',
+      try_it: 'Open Model Registry and use the "Roll back to previous production version" button.',
+    },
+    example: {
+      title: 'The 7 canary stages',
+      steps: ['stage', 'smoke_test', 'canary_5', 'canary_25', 'canary_50', 'canary_100', 'production'],
+    },
+  },
+  {
+    id: 'drift_detection',
+    title: 'Drift Detection (PSI & KS)',
+    subtitle: 'Is production data still shaped like training data?',
+    summary: 'Population Stability Index (PSI) and the Kolmogorov-Smirnov (KS) test compare each feature\'s production distribution against its training (reference) distribution. PSI < 0.10 is normal, 0.10-0.25 is a warning, and > 0.25 is significant drift.',
+    illustration: 'drift_detection',
+    flashcard: {
+      emoji: '📉',
+      question: 'Why compare distributions instead of just watching accuracy?',
+      takeaway: 'Ground truth (did the customer actually churn?) often arrives late or never. Drift metrics need only the model\'s INPUT features, so they can raise a signal long before enough labeled outcomes exist to measure accuracy directly.',
+      try_it: 'Run a monitoring check with the "severe_drift" profile in Drift & Monitoring and inspect the per-feature PSI table.',
+    },
+    example: {
+      title: 'PSI in one line',
+      steps: [
+        'PSI = sum( (Actual% - Expected%) x ln(Actual% / Expected%) )',
+        'Computed per feature by binning the reference distribution into deciles',
+        'A feature with a brand-new value range shows up as a large PSI immediately',
+      ],
+    },
+  },
+  {
+    id: 'decision_matrix',
+    title: 'The Drift × Evaluation Decision Matrix',
+    subtitle: 'Drift alone is not proof of failure',
+    summary: 'The platform never retrains on drift alone. It combines drift_level (LOW/HIGH) with evaluation_level (GOOD/BAD/UNKNOWN, from a production-accuracy check) via a 6-outcome lookup table, and only automatically retrains when drift is HIGH and evaluation is not confirmed GOOD.',
+    illustration: 'decision_matrix',
+    flashcard: {
+      emoji: '🧭',
+      question: 'Drift is HIGH but production accuracy is still GOOD — what happens?',
+      takeaway: 'Overall status is WARNING ("Investigate"), not CRITICAL, and NO automatic retrain fires — the model still works despite the shifted inputs, so it is monitored rather than churned through an unnecessary retrain.',
+      try_it: 'Compare the "drifted" vs. "severe_drift" profiles in Drift & Monitoring — only one reliably triggers auto-retrain.',
+    },
+    example: {
+      title: 'The 6 outcomes',
+      steps: [
+        'LOW drift + GOOD evaluation -> GREEN, Continue',
+        'HIGH drift + GOOD evaluation -> WARNING, Investigate',
+        'LOW drift + BAD evaluation -> CRITICAL, Investigate model',
+        'HIGH drift + BAD evaluation -> CRITICAL, Retrain/review (auto-retrain fires)',
+        'HIGH drift + UNKNOWN evaluation -> WARNING, Obtain ground truth (auto-retrain fires)',
+        'LOW drift + UNKNOWN evaluation -> NORMAL, Continue monitoring',
+      ],
+    },
+  },
+]

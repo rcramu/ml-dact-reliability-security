@@ -1,0 +1,48 @@
+{
+  "code_churn": {
+    "available": false,
+    "note": "no VCS history in this project (`git log` failed: 'fatal: not a git repository (or any of the parent directories): .git') \u2014 code churn (Nagappan & Ball, ref [14]) cannot be computed without commit history and is reported as N/A, not estimated. Cyclomatic complexity and LOC below do not depend on VCS history."
+  },
+  "modules": {
+    "backend/app/ml": {
+      "python_files": 7,
+      "functions_and_methods_measured": 20,
+      "avg_cyclomatic_complexity": 2.7,
+      "max_cyclomatic_complexity": 11,
+      "total_loc": 274,
+      "total_logical_loc": 176
+    },
+    "backend/app/routers": {
+      "python_files": 11,
+      "functions_and_methods_measured": 34,
+      "avg_cyclomatic_complexity": 2.56,
+      "max_cyclomatic_complexity": 6,
+      "total_loc": 499,
+      "total_logical_loc": 333
+    },
+    "backend/app/integrations": {
+      "python_files": 6,
+      "functions_and_methods_measured": 18,
+      "avg_cyclomatic_complexity": 1.83,
+      "max_cyclomatic_complexity": 4,
+      "total_loc": 241,
+      "total_logical_loc": 155
+    },
+    "backend/app (top-level)": {
+      "python_files": 36,
+      "functions_and_methods_measured": 146,
+      "avg_cyclomatic_complexity": 2.57,
+      "max_cyclomatic_complexity": 24,
+      "total_loc": 2694,
+      "total_logical_loc": 1885
+    },
+    "airflow/dags": {
+      "python_files": 3,
+      "functions_and_methods_measured": 7,
+      "avg_cyclomatic_complexity": 1.43,
+      "max_cyclomatic_complexity": 3,
+      "total_loc": 239,
+      "total_logical_loc": 92
+    }
+  }
+}

@@ -1,0 +1,595 @@
+{
+  "dependency_scan_backend_pip_audit": {
+    "method": "direct OSV.dev API query per pinned dependency (pip-audit CLI's local-build resolution failed in this environment \u2014 see docstring)",
+    "packages_scanned": 18,
+    "query_errors": [],
+    "vulnerabilities_found": 86,
+    "vulnerabilities": [
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "GHSA-3749-ghw9-m3mg",
+        "summary": "PyTorch susceptible to local Denial of Service"
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "GHSA-53q9-r3pm-6pq6",
+        "summary": "PyTorch: `torch.load` with `weights_only=True` leads to remote code execution"
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "GHSA-887c-mr87-cxwp",
+        "summary": "PyTorch Improper Resource Shutdown or Release vulnerability"
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "GHSA-c678-jfcj-6jmf",
+        "summary": "PyTorch Tuple Handler is Vulnerable to Memory Corruption through Manipulation of None Argument"
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "GHSA-f4hp-rmr7-r7v8",
+        "summary": "PyTorch is Vulnerable to Memory Consumption through pad_packed_sequence Function"
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "GHSA-qfhq-4f3w-5fph",
+        "summary": "PyTorch is vulnerable to memory corruption through its torch.lstm_cell function"
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "GHSA-rrmf-rvhw-rf47",
+        "summary": "PyTorch is vulnerable to memory corruption through its torch.jit.script function"
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "GHSA-vgrw-7cvw-pwgx",
+        "summary": "PyTorch is vulnerable to memory corruption through its unpack_sequence function"
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "GHSA-x3gm-94wq-g975",
+        "summary": "PyTorch: Manipulation of the argument scale/zero_point leads to improper initialization via Quantized Sigmoid Module"
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "PYSEC-2024-259",
+        "summary": "In PyTorch <=2.4.1, the RemoteModule has Deserialization RCE. NOTE: this is disputed by multiple parties because this is intended behavior in PyTorch distributed computing."
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "PYSEC-2025-191",
+        "summary": "A vulnerability, which was classified as problematic, has been found in PyTorch 2.6.0+cu124. Affected by this issue is the function torch.mkldnn_max_pool2d. The manipulation leads to denial of service"
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "PYSEC-2025-198",
+        "summary": "In PyTorch through 2.6.0, when eager is used, nn.PairwiseDistance(p=2) produces incorrect results."
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "PYSEC-2025-203",
+        "summary": "An issue in the component torch.linalg.lu of pytorch v2.8.0 allows attackers to cause a Denial of Service (DoS) when performing a slice operation."
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "PYSEC-2025-204",
+        "summary": "pytorch v2.8.0 was discovered to display unexpected behavior when the components torch.rot90 and torch.randn_like are used together."
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "PYSEC-2025-205",
+        "summary": "A syntax error in the component proxy_tensor.py of pytorch v2.7.0 allows attackers to cause a Denial of Service (DoS)."
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "PYSEC-2025-206",
+        "summary": "pytorch v2.8.0 was discovered to contain an integer overflow in the component torch.nan_to_num-.long()."
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "PYSEC-2025-207",
+        "summary": "A Name Error occurs in pytorch v2.7.0 when a PyTorch model consists of torch.cummin and is compiled by Inductor, leading to a Denial of Service (DoS)."
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "PYSEC-2025-208",
+        "summary": "A buffer overflow occurs in pytorch v2.7.0 when a PyTorch model consists of torch.nn.Conv2d, torch.nn.functional.hardshrink, and torch.Tensor.view-torch.mv() and is compiled by Inductor, leading to a "
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "PYSEC-2025-209",
+        "summary": "An issue in pytorch v2.7.0 can lead to a Denial of Service (DoS) when a PyTorch model consists of torch.Tensor.to_sparse() and torch.Tensor.to_dense() and is compiled by Inductor."
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "PYSEC-2025-41",
+        "summary": "PyTorch is a Python package that provides tensor computation with strong GPU acceleration and deep neural networks built on a tape-based autograd system. In version 2.5.1 and prior, a Remote Command E"
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "PYSEC-2026-139",
+        "summary": "A vulnerability was identified in PyTorch 2.10.0. The affected element is an unknown function of the component pt2 Loading Handler. The manipulation leads to deserialization. The attack can only be pe"
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "PYSEC-2026-1970",
+        "summary": "PyTorch Improper Resource Shutdown or Release vulnerability"
+      },
+      {
+        "package": "torch",
+        "version": "2.2.2",
+        "id": "PYSEC-2026-2286",
+        "summary": "PyTorch is a Python package that provides tensor computation. Prior to version 2.10.0, a vulnerability in PyTorch's `weights_only` unpickler allows an attacker to craft a malicious checkpoint file (`."
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-2cm6-r77w-6g96",
+        "summary": "MLflow: trace API endpoints lack proper authorization validators"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-42h5-h8qh-vv9v",
+        "summary": "MLflow allows an unauthenticated remote attacker to read arbitrary files from the server's filesystem"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-46r5-x6jq-v8g6",
+        "summary": "MLflow is vulnerable to an authorization bypass affecting the AJAX endpoint"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-49m6-vrr9-2cqm",
+        "summary": "MLflow Uncontrolled Resource Consumption vulnerability"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-4rj2-9gcx-5qhx",
+        "summary": "MLflow has Weak Password Requirements"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-4x5p-f36r-mxxr",
+        "summary": "mlflow Creates of Temporary File in Directory with Insecure Permissions"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-5cvj-7rg6-jggj",
+        "summary": "MLflow Tracking Server Model Creation Directory Traversal Remote Code Execution Vulnerability"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-5qmp-p3c4-72qj",
+        "summary": "MLflow: Deterministic sampling in dataset digest enables predictable collisions"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-65h7-c7c4-mghx",
+        "summary": "MLflow Has a Server-Side Request Forgery (SSRF) Vulnerability"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-6xj8-rrqx-r4cv",
+        "summary": "MLflow Weak Password Requirements Authentication Bypass Vulnerability"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-75cm-x2w3-8mgf",
+        "summary": "MLflow: unauthenticated access to certain FastAPI routes"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-7gwp-5pfp-969j",
+        "summary": "MLflow: Unauthenticated full-read SSRF in webhook delivery: _validate_webhook_url bypassed via unvalidated HTTP redirects (and DNS rebinding)"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-7qhf-v65m-g5f3",
+        "summary": "mlflow: FastAPI job endpoints under `/ajax-api/3.0/jobs/*` are not protected by authentication or authorization"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-8c7q-86fq-vvmh",
+        "summary": "MLflow allows unauthorized access to multipart upload endpoints when the `--serve-artifacts` mode is enabled"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-969w-gqqr-g6j3",
+        "summary": "MLflow Cross-Site Request Forgery (CSRF) vulnerability"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-f2m9-wcf4-cwwx",
+        "summary": "MLFlow Creates a Temporary File With Insecure Permissions "
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-fh64-r2vc-xvhr",
+        "summary": "MLflow is vulnerable to Stored Cross-Site Scripting (XSS) caused by unsafe parsing of YAML-based MLmodel artifacts in its web interface"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-fhff-qmm8-h2fp",
+        "summary": "Arbitrary file write via tar traversal in mlflow"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-g35p-px32-whv6",
+        "summary": "MLflow: Environment variable injection in AI Gateway secrets enables server-side credential exfiltration"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-g6pg-52vf-843h",
+        "summary": "MLFlow allows Tracing + Assessments Access"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-gq3w-7jj3-x7gr",
+        "summary": "MLflow Use of Default Password Authentication Bypass Vulnerability"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-gqvg-gmmx-x4hm",
+        "summary": "MLFLOW_ALLOW_PICKLE_DESERIALIZATION=False safety control bypassed by mlflow.statsmodels flavor \u2014 RCE via crafted model artifact"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-pgqp-8h46-6x4j",
+        "summary": "MLFlow is vulnerable to DNS rebinding attacks due to a lack of Origin header validation"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-q2r8-vmq7-fpx2",
+        "summary": "MLflow Tracking Server Artifact Handler Directory Traversal Remote Code Execution Vulnerability"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-r23q-823p-vmf7",
+        "summary": "MLflow Command Injection vulnerability"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-r5m9-wm49-959f",
+        "summary": "MLflow: Any authenticated user can enumerate all gateway secrets, endpoints, and model definitions"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-rvhj-8chj-8v3c",
+        "summary": "Mlflow: Command Injection when serving models with enable_mlserver=True"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-vhcx-3pq2-4fvc",
+        "summary": "MLFlow path traversal vulnerability"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-w5xq-c4pf-ghq7",
+        "summary": "MLflow authenticated users can enumerate any registered model versions due to lack of per-model permissions checks"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-wf7f-8fxf-xfxc",
+        "summary": "MLFlow unsafe deserialization"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-wxj7-3fx5-pp9m",
+        "summary": "MLFlow SSRF via gateway_proxy_handler"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "GHSA-xch3-2f9x-wh9f",
+        "summary": "MLflow has a command injection in mlflow/sagemaker/__init__.py"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2025-17",
+        "summary": "In mlflow/mlflow version 2.18, an admin is able to create a new user account without setting a password. This vulnerability could lead to security risks, as accounts without passwords may be susceptib"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2025-52",
+        "summary": "gateway_proxy_handler in MLflow before 3.1.0 lacks gateway_path validation."
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-1637",
+        "summary": "MLflow Uncontrolled Resource Consumption vulnerability"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-1639",
+        "summary": "mlflow Creates of Temporary File in Directory with Insecure Permissions"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-1640",
+        "summary": "MLflow Tracking Server Model Creation Directory Traversal Remote Code Execution Vulnerability"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-1642",
+        "summary": "MLflow Weak Password Requirements Authentication Bypass Vulnerability"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-1646",
+        "summary": "MLflow Cross-Site Request Forgery (CSRF) vulnerability"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-1656",
+        "summary": "MLFlow is vulnerable to DNS rebinding attacks due to a lack of Origin header validation"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-1660",
+        "summary": "MLFlow unsafe deserialization"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-195",
+        "summary": "A flaw has been found in MLflow up to 3.10.0. This issue affects the function mlflow.data.digest_utils of the file mlflow/data/digest_utils.py of the component Dataset Digest Computation. This manipul"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-2219",
+        "summary": "A Server-Side Request Forgery (SSRF) vulnerability exists in MLflow versions prior to 3.9.0. The `_create_webhook()` function in `mlflow/server/handlers.py` accepts a user-controlled `url` parameter w"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-2220",
+        "summary": "A vulnerability in MLflow versions <=3.10.1.dev0 allows unauthorized access to multipart upload (MPU) endpoints when the `--serve-artifacts` mode is enabled. The authorization logic does not enforce r"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-2221",
+        "summary": "A vulnerability in mlflow/mlflow versions 3.9.0 and earlier allows unauthenticated access to certain FastAPI routes when the server is started with authentication enabled (`--app-name basic-auth`) and"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-2222",
+        "summary": "A vulnerability in mlflow/mlflow versions prior to 3.11.0 allows for the resolution of environment variables in AI Gateway secrets, which can be exploited to exfiltrate sensitive server-side environme"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-2654",
+        "summary": "MLflow allows an unauthenticated remote attacker to read arbitrary files from the server's filesystem"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-2655",
+        "summary": "MLFlow Creates a Temporary File With Insecure Permissions "
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-2656",
+        "summary": "Arbitrary file write via tar traversal in mlflow"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-2657",
+        "summary": "MLFlow allows Tracing + Assessments Access"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-2658",
+        "summary": "MLflow Tracking Server Artifact Handler Directory Traversal Remote Code Execution Vulnerability"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-2659",
+        "summary": "MLflow: Any authenticated user can enumerate all gateway secrets, endpoints, and model definitions"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-2660",
+        "summary": "MLflow authenticated users can enumerate any registered model versions due to lack of per-model permissions checks"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-2661",
+        "summary": "MLflow has a command injection in mlflow/sagemaker/__init__.py"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-3686",
+        "summary": "MLflow: trace API endpoints lack proper authorization validators"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-3687",
+        "summary": "MLflow: Unauthenticated full-read SSRF in webhook delivery: _validate_webhook_url bypassed via unvalidated HTTP redirects (and DNS rebinding)"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-419",
+        "summary": "mlflow: FastAPI job endpoints under `/ajax-api/3.0/jobs/*` are not protected by authentication or authorization"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-421",
+        "summary": "MLflow Use of Default Password Authentication Bypass Vulnerability"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-423",
+        "summary": "MLflow Command Injection vulnerability"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-424",
+        "summary": "Mlflow: Command Injection when serving models with enable_mlserver=True"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-425",
+        "summary": "MLFlow path traversal vulnerability"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-93",
+        "summary": "MLflow is vulnerable to Stored Cross-Site Scripting (XSS) caused by unsafe parsing of YAML-based MLmodel artifacts in its web interface. An authenticated attacker can upload a malicious MLmodel file c"
+      },
+      {
+        "package": "mlflow",
+        "version": "2.17.2",
+        "id": "PYSEC-2026-94",
+        "summary": "MLflow is vulnerable to an authorization bypass affecting the AJAX endpoint used to download saved model artifacts. Due to missing access\u2011control validation, a user without permissions to a given expe"
+      }
+    ]
+  },
+  "dependency_scan_frontend_npm_audit": {
+    "vulnerabilities_by_severity": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "total": 0
+  },
+  "container_image_scan_docker_scout": {
+    "1contnuous-monitoring-frontend:latest": {
+      "finding_count": 8
+    },
+    "1contnuous-monitoring-backend:latest": {
+      "finding_count": 167
+    }
+  },
+  "credential_and_network_hygiene_review": {
+    "scope_note": "This stack runs on Docker Compose, not AWS IAM/EKS RBAC as in Paper A's Section 10.2 diagram; this review checks the closest available proxy \u2014 credential hygiene and network exposure in the actual compose/config files \u2014 rather than a live IAM policy simulation.",
+    "findings_count": 10,
+    "findings": [
+      {
+        "line": 7,
+        "match": "PASSWORD: cmp_pass",
+        "finding": "hardcoded password in docker-compose.yml"
+      },
+      {
+        "line": 41,
+        "match": "PASSWORD: cmp_minio_secret",
+        "finding": "hardcoded password in docker-compose.yml"
+      },
+      {
+        "line": 59,
+        "match": "PASSWORD: ChurnPlatform!2026",
+        "finding": "hardcoded password in docker-compose.yml"
+      },
+      {
+        "line": 105,
+        "match": "PASSWORD: admin",
+        "finding": "hardcoded password in docker-compose.yml"
+      },
+      {
+        "line": 164,
+        "match": "SECRET_KEY: churnplatform-dev-secret-key",
+        "finding": "hardcoded secret key in docker-compose.yml"
+      },
+      {
+        "line": 41,
+        "match": "ROOT_PASSWORD: cmp_minio_secret",
+        "finding": "hardcoded root credential in docker-compose.yml"
+      },
+      {
+        "line": 60,
+        "match": "HEC_TOKEN: \"22222222-2222-2222-2222-222222222222",
+        "finding": "hardcoded API token in docker-compose.yml"
+      },
+      {
+        "finding": "Grafana anonymous Viewer access enabled (GF_AUTH_ANONYMOUS_ENABLED=true) \u2014 dashboards are unauthenticated on the exposed port"
+      },
+      {
+        "finding": "Grafana admin password left at the documented default ('admin') in compose file"
+      },
+      {
+        "finding": "14 host ports published to 0.0.0.0 by default (docker-compose `ports:` binds all interfaces unless a host IP is specified): ['\"5480:5432\"', '\"5030:5000\"', '\"9370:9000\"', '\"9371:9001\"', '\"8370:8000\"', '\"8371:8088\"', '\"8372:8089\"', '\"4370:4317\"', '\"4371:4318\"', '\"9300:9090\"', '\"3370:3000\"', '\"8170:8000\"', '\"3070:80\"', '\"8770:8080\"']"
+      }
+    ]
+  }
+}

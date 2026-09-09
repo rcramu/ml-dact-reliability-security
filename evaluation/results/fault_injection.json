@@ -1,0 +1,187 @@
+{
+  "generated_at": "2026-09-07T04:24:27.682960+00:00",
+  "trials_per_scenario": 5,
+  "scenarios": {
+    "backend_kill_inflight": {
+      "fault": "backend_kill_inflight",
+      "description": "docker kill cmp_backend while a POST /training request is in flight",
+      "trials": [
+        {
+          "trial": 1,
+          "client_saw_exception": true,
+          "client_exception_type": "ConnectionError",
+          "auto_restart_mttr_seconds": null,
+          "manual_intervention_required": true,
+          "manual_intervention_mttr_seconds": 5.405,
+          "wallclock_from_kill_command_s": 0.762,
+          "orphaned_running_run": false,
+          "most_recent_run_status": "REJECTED"
+        },
+        {
+          "trial": 2,
+          "client_saw_exception": true,
+          "client_exception_type": "ConnectionError",
+          "auto_restart_mttr_seconds": null,
+          "manual_intervention_required": true,
+          "manual_intervention_mttr_seconds": 3.759,
+          "wallclock_from_kill_command_s": 0.339,
+          "orphaned_running_run": false,
+          "most_recent_run_status": "REJECTED"
+        },
+        {
+          "trial": 3,
+          "client_saw_exception": true,
+          "client_exception_type": "ConnectionError",
+          "auto_restart_mttr_seconds": null,
+          "manual_intervention_required": true,
+          "manual_intervention_mttr_seconds": 2.736,
+          "wallclock_from_kill_command_s": 0.331,
+          "orphaned_running_run": false,
+          "most_recent_run_status": "REJECTED"
+        },
+        {
+          "trial": 4,
+          "client_saw_exception": true,
+          "client_exception_type": "ConnectionError",
+          "auto_restart_mttr_seconds": null,
+          "manual_intervention_required": true,
+          "manual_intervention_mttr_seconds": 3.766,
+          "wallclock_from_kill_command_s": 0.264,
+          "orphaned_running_run": false,
+          "most_recent_run_status": "REJECTED"
+        },
+        {
+          "trial": 5,
+          "client_saw_exception": true,
+          "client_exception_type": "ConnectionError",
+          "auto_restart_mttr_seconds": null,
+          "manual_intervention_required": true,
+          "manual_intervention_mttr_seconds": 2.77,
+          "wallclock_from_kill_command_s": 0.37,
+          "orphaned_running_run": false,
+          "most_recent_run_status": "REJECTED"
+        }
+      ],
+      "auto_restart_mttr_seconds_avg": null,
+      "manual_intervention_required_count": 5,
+      "manual_intervention_mttr_seconds_avg": 3.687
+    },
+    "mlflow_outage": {
+      "fault": "mlflow_outage",
+      "description": "docker stop cmp_mlflow, trigger training, inspect registration integrity, then restore",
+      "trials": [
+        {
+          "trial": 1,
+          "raw_response_summary": {
+            "client_exception": "ReadTimeout: HTTPConnectionPool(host='localhost', port=8170): Read timed out. (read timeout=30.0)"
+          },
+          "pipeline_response_ok": false,
+          "outcome": null,
+          "mttr_seconds": 7.175
+        },
+        {
+          "trial": 2,
+          "raw_response_summary": {
+            "client_exception": "ReadTimeout: HTTPConnectionPool(host='localhost', port=8170): Read timed out. (read timeout=30.0)"
+          },
+          "pipeline_response_ok": false,
+          "outcome": null,
+          "mttr_seconds": 4.969
+        },
+        {
+          "trial": 3,
+          "raw_response_summary": {
+            "client_exception": "ReadTimeout: HTTPConnectionPool(host='localhost', port=8170): Read timed out. (read timeout=30.0)"
+          },
+          "pipeline_response_ok": false,
+          "outcome": null,
+          "mttr_seconds": 6.035
+        },
+        {
+          "trial": 4,
+          "raw_response_summary": {
+            "client_exception": "ReadTimeout: HTTPConnectionPool(host='localhost', port=8170): Read timed out. (read timeout=30.0)"
+          },
+          "pipeline_response_ok": false,
+          "outcome": null,
+          "mttr_seconds": 3.823
+        },
+        {
+          "trial": 5,
+          "raw_response_summary": {
+            "client_exception": "ReadTimeout: HTTPConnectionPool(host='localhost', port=8170): Read timed out. (read timeout=30.0)"
+          },
+          "pipeline_response_ok": false,
+          "outcome": null,
+          "mttr_seconds": 6.47
+        }
+      ],
+      "mttr_seconds_avg": 5.694,
+      "integrity_findings_count": 0
+    },
+    "minio_outage": {
+      "fault": "minio_outage",
+      "description": "docker stop cmp_minio, trigger training, confirm graceful degradation, then restore",
+      "trials": [
+        {
+          "trial": 1,
+          "raw_response_summary": {
+            "client_exception": "ReadTimeout: HTTPConnectionPool(host='localhost', port=8170): Read timed out. (read timeout=30.0)"
+          },
+          "pipeline_response_ok": false,
+          "outcome": null,
+          "mttr_seconds": 1.562
+        },
+        {
+          "trial": 2,
+          "raw_response_summary": {
+            "client_exception": "ReadTimeout: HTTPConnectionPool(host='localhost', port=8170): Read timed out. (read timeout=30.0)"
+          },
+          "pipeline_response_ok": false,
+          "outcome": null,
+          "mttr_seconds": 2.059
+        },
+        {
+          "trial": 3,
+          "raw_response_summary": {
+            "client_exception": "ReadTimeout: HTTPConnectionPool(host='localhost', port=8170): Read timed out. (read timeout=30.0)"
+          },
+          "pipeline_response_ok": false,
+          "outcome": null,
+          "mttr_seconds": 2.097
+        },
+        {
+          "trial": 4,
+          "raw_response_summary": {
+            "client_exception": "ReadTimeout: HTTPConnectionPool(host='localhost', port=8170): Read timed out. (read timeout=30.0)"
+          },
+          "pipeline_response_ok": false,
+          "outcome": null,
+          "mttr_seconds": 1.023
+        },
+        {
+          "trial": 5,
+          "raw_response_summary": {
+            "client_exception": "ReadTimeout: HTTPConnectionPool(host='localhost', port=8170): Read timed out. (read timeout=30.0)"
+          },
+          "pipeline_response_ok": false,
+          "outcome": null,
+          "mttr_seconds": 1.046
+        }
+      ],
+      "mttr_seconds_avg": 1.557
+    },
+    "rollback_mechanism": {
+      "fault": "rollback_mechanism",
+      "description": "POST /rollback against the live champion, verify correctness, then restore original state via SQL",
+      "pre_champion_version": 36,
+      "expected_post_champion_version": 27,
+      "observed_post_champion_version": 27,
+      "rollback_correct": true,
+      "rollback_call_latency_seconds": 1.21,
+      "restore_sql_returncode": 0,
+      "restore_sql_stderr": null,
+      "state_restored_correctly": true
+    }
+  }
+}

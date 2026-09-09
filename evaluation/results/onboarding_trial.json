@@ -1,0 +1,134 @@
+{
+  "generated_at": "2026-09-07T05:41:35.406683+00:00",
+  "task": "Add a second monitored model, following only existing documentation, then verify + clean up",
+  "step1_documentation_review": {
+    "elapsed_seconds": null,
+    "honesty_note": "Not measured. A genuine onboarding-lead-time duration requires a truly naive participant who has not already worked with this codebase; the authors/agent producing this result already know the codebase, so any duration claimed here would be fabricated, not measured. Reported instead as a qualitative, independently-verifiable finding (see 'finding' below) plus a real, task-based proxy: Step 2's mechanical DB-onboarding time.",
+    "log": [
+      "Checked README.md (top-level project description, docker-compose usage) \u2014 no model-management section.",
+      "Checked code/EVALUATION.md (harness usage) \u2014 describes evaluation tooling only, not model onboarding.",
+      "Checked OpenAPI docs (GET /docs) route list \u2014 every write route takes an existing {model} path param (POST /{model}/training, /{model}/monitoring/check, /{model}/rollback); no POST /api/v1/models create route.",
+      "Grepped backend/app/routers/*.py for @router.post|@router.put directly to confirm \u2014 5 matches, none creates a model.",
+      "Conclusion: onboarding a new model requires backend source/DB access (seed.py pattern), not a documented API call."
+    ],
+    "finding": "No documented/API path exists to add a model \u2014 every write endpoint requires an existing model name; onboarding requires direct backend code/DB access (seed.py's own pattern)."
+  },
+  "step2_db_level_onboarding": {
+    "elapsed_seconds": 16.893,
+    "method": "docker exec into cmp_backend, reusing its own SQLAlchemy session + pipeline_engine.run_pipeline()",
+    "result": {
+      "model_id": "135413df-a2b0-43d6-923b-e5eb36d0a115",
+      "run_id": "4373ab2b-4621-40df-91b0-7a4bb0b9706e",
+      "run_status": "SUCCESS",
+      "run_outcome": "PROMOTED"
+    }
+  },
+  "step3_verification": {
+    "new_model_listed_in_GET_models": true,
+    "independent_monitoring_check_result": {
+      "id": "eb11ed46-f9fb-49ba-9932-978f3506488a",
+      "model_id": "135413df-a2b0-43d6-923b-e5eb36d0a115",
+      "model_version_id": "61ec5eef-0615-4505-848a-055ae167eda5",
+      "drift_level": "LOW",
+      "evaluation_level": "GOOD",
+      "overall_status": "GREEN",
+      "recommended_action": "Continue",
+      "max_psi": 0.0635,
+      "production_accuracy": 0.78,
+      "triggered_retrain": false,
+      "retrain_run_id": null,
+      "created_at": "2026-09-07T05:41:20.394776",
+      "feature_results": [
+        {
+          "feature_name": "tenure_months",
+          "psi": 0.0445,
+          "ks_statistic": 0.0583,
+          "ks_pvalue": 0.4639,
+          "reference_mean": 22.6042,
+          "production_mean": 23.148,
+          "status": "GREEN"
+        },
+        {
+          "feature_name": "monthly_charges",
+          "psi": 0.0393,
+          "ks_statistic": 0.0515,
+          "ks_pvalue": 0.6228,
+          "reference_mean": 70.132,
+          "production_mean": 69.1494,
+          "status": "GREEN"
+        },
+        {
+          "feature_name": "age",
+          "psi": 0.0632,
+          "ks_statistic": 0.0763,
+          "ks_pvalue": 0.17,
+          "reference_mean": 41.5733,
+          "production_mean": 40.364,
+          "status": "GREEN"
+        },
+        {
+          "feature_name": "support_tickets_90d",
+          "psi": 0.0055,
+          "ks_statistic": 0.0307,
+          "ks_pvalue": 0.9866,
+          "reference_mean": 1.11,
+          "production_mean": 1.072,
+          "status": "GREEN"
+        },
+        {
+          "feature_name": "usage_hours_week",
+          "psi": 0.0635,
+          "ks_statistic": 0.0545,
+          "ks_pvalue": 0.551,
+          "reference_mean": 12.289,
+          "production_mean": 12.5475,
+          "status": "GREEN"
+        },
+        {
+          "feature_name": "is_month_to_month",
+          "psi": 0.0,
+          "ks_statistic": 0.0182,
+          "ks_pvalue": 1.0,
+          "reference_mean": 0.4742,
+          "production_mean": 0.456,
+          "status": "GREEN"
+        },
+        {
+          "feature_name": "autopay_enabled",
+          "psi": 0.0,
+          "ks_statistic": 0.009,
+          "ks_pvalue": 1.0,
+          "reference_mean": 0.535,
+          "production_mean": 0.544,
+          "status": "GREEN"
+        },
+        {
+          "feature_name": "has_addons",
+          "psi": 0.0,
+          "ks_statistic": 0.031,
+          "ks_pvalue": 0.9849,
+          "reference_mean": 0.345,
+          "production_mean": 0.376,
+          "status": "GREEN"
+        }
+      ]
+    }
+  },
+  "step4_cleanup": {
+    "first_attempt": {
+      "cleanup_stdout": "",
+      "cleanup_stderr": "ForeignKeyViolation: update or delete on table \"model_versions\" violates foreign key constraint \"drift_checks_model_version_id_fkey\" on table \"drift_checks\" (Key (id)=(61ec5eef-0615-4505-848a-055ae167eda5) is still referenced from table \"drift_checks\").",
+      "model_still_listed_after_cleanup": true,
+      "finding": "The cleanup script's own deletion order was incomplete: it missed drift_checks/drift_feature_results, and a second attempt also missed raw_records/data_quality_checks (both reference dataset_version_id) and pipeline_runs (also references dataset_version_id, blocking dataset_versions deletion) -- each attempt ran as a single uncommitted transaction, so a mid-transaction FK error rolled back the ENTIRE attempt's deletes, not just the failing statement. This is itself a small, honestly-reported instance of the same 'onboarding/teardown is not fully tooled' finding as Step 1: removing a model correctly requires knowing the full FK dependency graph across 9 tables, which is not documented anywhere either."
+    },
+    "second_attempt_corrected_order": {
+      "cleanup_stdout": "cleaned up: customer-churn-eu",
+      "cleanup_stderr": null,
+      "model_still_listed_after_cleanup": false,
+      "elapsed_note": "Not separately timed; run manually after diagnosing the FK order via the actual Postgres error messages (see first_attempt). Full corrected order: drift_feature_results -> drift_checks -> production_predictions/evaluation_results/deployment_events/alerts(by version) -> pipeline_stages/sla_violations/alerts(by run) -> data_quality_checks/raw_records(by dataset_version) -> model_versions -> pipeline_runs -> dataset_versions -> audit_logs -> the model row itself, committed once at the end."
+    },
+    "model_still_listed_after_cleanup": false
+  },
+  "total_elapsed_seconds": null,
+  "total_elapsed_note": "Only Step 2's mechanical time is a real measurement (see above); no total is reported since Step 1's duration was not honestly measurable in this session. Cleanup required two corrective passes (see step4_cleanup) before the platform was verifiably restored to single-model state."
+}
