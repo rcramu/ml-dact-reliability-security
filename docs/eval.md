@@ -2,7 +2,7 @@
 
 Companion deposit for **An Empirical Reliability and Security Evaluation of Drift-Aware Continuous Training**.
 
-**Data folder:** [`evaluation/results/`](results/) holds every captured JSON file used in Tables 1–3. See [`evaluation/results/README.md`](results/README.md).
+**Data folder:** [`evaluation/results/`](../evaluation/results/) holds every captured JSON file used in Tables 1–3. See [`evaluation/results/README.md`](../evaluation/results/README.md).
 
 Two observation windows, selected with `--runtime`:
 
