@@ -35,29 +35,39 @@ statements) are left as found — same test-then-restore pattern already used
 for the rollback mechanism test in fault_injection.py.
 
 Usage:
-    evaluation/.venv/bin/python evaluation/onboarding_trial.py
+    evaluation/.venv/bin/python evaluation/onboarding_trial.py --runtime compose
+    evaluation/.venv/bin/python evaluation/onboarding_trial.py --runtime k8s
 """
 from __future__ import annotations
 
+import argparse
 import json
 import subprocess
+import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 
 import requests
 
-BACKEND = "http://localhost:8170"
-NEW_MODEL_NAME = "customer-churn-eu"
 RESULTS_DIR = Path(__file__).parent / "results"
+sys.path.insert(0, str(Path(__file__).parent))
 
 
 def _docker_exec_python(code: str) -> subprocess.CompletedProcess:
     return subprocess.run(["docker", "exec", "-i", "cmp_backend", "python", "-c", code],
-                           capture_output=True, text=True, timeout=60)
+                           capture_output=True, text=True, timeout=180)
 
 
-ONBOARD_SNIPPET = """
+def _k8s_exec_python(code: str) -> subprocess.CompletedProcess:
+    from k8s_runtime import assert_kind_context, exec_python_in_backend
+
+    assert_kind_context()
+    return exec_python_in_backend(code, timeout=180)
+
+
+def _onboard_snippet(name: str) -> str:
+    return """
 import json
 from app.database import SessionLocal
 from app import models as m
@@ -72,9 +82,24 @@ pe.ensure_sla_config(db)
 run = pe.run_pipeline(db, model, trigger_type="manual", trigger_detail="Onboarding trial: initial training", scenario="healthy")
 db.commit()
 print(json.dumps({"model_id": model.id, "run_id": run.id, "run_status": run.status, "run_outcome": run.outcome}))
-""" % {"name": NEW_MODEL_NAME}
+""" % {"name": name}
 
-CLEANUP_SNIPPET = """
+
+def _cleanup_snippet(name: str, runtime: str) -> str:
+    # Compose snapshot has DriftCheck / ProductionPrediction tables; kind/Paper A does not.
+    extra_checks = ""
+    extra_versions = ""
+    if runtime == "compose":
+        extra_checks = """
+    check_ids = [c.id for c in db.query(m.DriftCheck).filter_by(model_id=mid).all()]
+    if check_ids:
+        db.query(m.DriftFeatureResult).filter(m.DriftFeatureResult.drift_check_id.in_(check_ids)).delete(synchronize_session=False)
+    db.query(m.DriftCheck).filter_by(model_id=mid).delete(synchronize_session=False)
+"""
+        extra_versions = """
+        db.query(m.ProductionPrediction).filter(m.ProductionPrediction.model_version_id.in_(version_ids)).delete(synchronize_session=False)
+"""
+    return """
 from app.database import SessionLocal
 from app import models as m
 
@@ -84,17 +109,14 @@ if model:
     mid = model.id
     version_ids = [v.id for v in db.query(m.ModelVersion).filter_by(model_id=mid).all()]
     run_ids = [r.id for r in db.query(m.PipelineRun).filter_by(model_id=mid).all()]
-    check_ids = [c.id for c in db.query(m.DriftCheck).filter_by(model_id=mid).all()]
     ds_ids = [d.id for d in db.query(m.DatasetVersion).filter_by(model_id=mid).all()]
-
-    if check_ids:
-        db.query(m.DriftFeatureResult).filter(m.DriftFeatureResult.drift_check_id.in_(check_ids)).delete(synchronize_session=False)
-    db.query(m.DriftCheck).filter_by(model_id=mid).delete(synchronize_session=False)
+%(extra_checks)s
     if version_ids:
-        db.query(m.ProductionPrediction).filter(m.ProductionPrediction.model_version_id.in_(version_ids)).delete(synchronize_session=False)
+%(extra_versions)s
         db.query(m.EvaluationResult).filter(m.EvaluationResult.candidate_version_id.in_(version_ids)).delete(synchronize_session=False)
         db.query(m.DeploymentEvent).filter(m.DeploymentEvent.model_version_id.in_(version_ids)).delete(synchronize_session=False)
         db.query(m.Alert).filter(m.Alert.model_version_id.in_(version_ids)).delete(synchronize_session=False)
+        db.query(m.RollbackEvent).filter((m.RollbackEvent.from_version_id.in_(version_ids)) | (m.RollbackEvent.to_version_id.in_(version_ids))).delete(synchronize_session=False)
     if run_ids:
         db.query(m.PipelineStage).filter(m.PipelineStage.run_id.in_(run_ids)).delete(synchronize_session=False)
         db.query(m.SlaViolation).filter(m.SlaViolation.run_id.in_(run_ids)).delete(synchronize_session=False)
@@ -111,11 +133,33 @@ if model:
     print("cleaned up:", "%(name)s")
 else:
     print("nothing to clean up")
-""" % {"name": NEW_MODEL_NAME}
+""" % {"name": name, "extra_checks": extra_checks, "extra_versions": extra_versions}
 
 
 def main() -> None:
-    assert requests.get(f"{BACKEND}/ready", timeout=5).json().get("ready"), "backend not ready"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--runtime", choices=["compose", "k8s"], default="compose")
+    args = parser.parse_args()
+
+    if args.runtime == "k8s":
+        from k8s_runtime import BACKEND_URL, assert_kind_context
+
+        assert_kind_context()
+        backend = BACKEND_URL
+        new_model = "paper-b-onboard-trial"
+        exec_py = _k8s_exec_python
+        method = "kubectl --context kind-dact-local-eks exec deploy/backend -- python -c ..."
+        out_name = "onboarding_trial_kind.json"
+    else:
+        backend = "http://localhost:8170"
+        new_model = "customer-churn-eu"
+        exec_py = _docker_exec_python
+        method = "docker exec into cmp_backend, reusing its own SQLAlchemy session + pipeline_engine.run_pipeline()"
+        out_name = "onboarding_trial.json"
+
+    assert requests.get(f"{backend}/ready", timeout=5).json().get("ready"), "backend not ready"
+    onboard = _onboard_snippet(new_model)
+    cleanup = _cleanup_snippet(new_model, args.runtime)
 
     doc_log = [
         "Checked README.md (top-level project description, docker-compose usage) — no model-management section.",
@@ -127,7 +171,7 @@ def main() -> None:
     ]
 
     t_code_start = time.monotonic()
-    proc = _docker_exec_python(ONBOARD_SNIPPET)
+    proc = exec_py(onboard)
     t_code_done = time.monotonic()
     onboard_result = None
     if proc.returncode == 0 and proc.stdout.strip():
@@ -136,24 +180,34 @@ def main() -> None:
         except json.JSONDecodeError:
             onboard_result = {"raw_stdout": proc.stdout.strip()}
     else:
-        onboard_result = {"error": proc.stderr.strip()[-1000:]}
+        onboard_result = {"error": (proc.stderr or "").strip()[-1000:]}
 
-    verify = requests.get(f"{BACKEND}/api/v1/models", timeout=10).json()
-    new_model_listed = any(mdl["name"] == NEW_MODEL_NAME for mdl in verify)
+    verify = requests.get(f"{backend}/api/v1/models", timeout=10).json()
+    new_model_listed = any(mdl["name"] == new_model for mdl in verify)
 
     check_resp = None
     if new_model_listed:
-        check_resp = requests.post(
-            f"{BACKEND}/api/v1/models/{NEW_MODEL_NAME}/monitoring/check",
-            json={"profile": "stable", "auto_retrain": False}, timeout=30,
-        ).json()
+        if args.runtime == "k8s":
+            check_resp = requests.get(
+                f"{backend}/api/v1/models/{new_model}/joint-cell",
+                params={"scenario": "healthy", "seed": 42},
+                timeout=30,
+            ).json()
+        else:
+            check_resp = requests.post(
+                f"{backend}/api/v1/models/{new_model}/monitoring/check",
+                json={"profile": "stable", "auto_retrain": False}, timeout=30,
+            ).json()
 
-    cleanup_proc = _docker_exec_python(CLEANUP_SNIPPET)
-    verify_after_cleanup = requests.get(f"{BACKEND}/api/v1/models", timeout=10).json()
-    still_listed_after_cleanup = any(mdl["name"] == NEW_MODEL_NAME for mdl in verify_after_cleanup)
+    cleanup_proc = exec_py(cleanup)
+    verify_after_cleanup = requests.get(f"{backend}/api/v1/models", timeout=10).json()
+    still_listed_after_cleanup = any(mdl["name"] == new_model for mdl in verify_after_cleanup)
 
     report = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
+        "runtime": args.runtime,
+        "backend": backend,
+        "new_model": new_model,
         "task": "Add a second monitored model, following only existing documentation, then verify + clean up",
         "step1_documentation_review": {
             "elapsed_seconds": None,
@@ -168,7 +222,7 @@ def main() -> None:
         },
         "step2_db_level_onboarding": {
             "elapsed_seconds": round(t_code_done - t_code_start, 3),
-            "method": "docker exec into cmp_backend, reusing its own SQLAlchemy session + pipeline_engine.run_pipeline()",
+            "method": method,
             "result": onboard_result,
         },
         "step3_verification": {
@@ -185,7 +239,7 @@ def main() -> None:
                               "since Step 1's duration was not honestly measurable in this session.",
     }
     RESULTS_DIR.mkdir(exist_ok=True)
-    out = RESULTS_DIR / "onboarding_trial.json"
+    out = RESULTS_DIR / out_name
     out.write_text(json.dumps(report, indent=2, default=str))
     print(f"Wrote {out}")
     print(json.dumps(report, indent=2, default=str))
