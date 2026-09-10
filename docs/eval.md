@@ -2,7 +2,7 @@
 
 Companion deposit for **An Empirical Reliability and Security Evaluation of Drift-Aware Continuous Training**.
 
-**Data folder:** [`evaluation/results/`](results/) holds every captured JSON file used in Tables 1–3. See [`evaluation/results/README.md`](results/README.md).
+**Data folder:** [`evaluation/results/`](../evaluation/results/) holds every captured JSON file used in Tables 1–3. See [`evaluation/results/README.md`](../evaluation/results/README.md).
 
 Two observation windows, selected with `--runtime`:
 
@@ -36,6 +36,14 @@ evaluation/.venv/bin/python evaluation/f1_only_ablation.py
 ```
 
 Kind A/B/C maps profiles to generator scenarios: `stable`→`healthy`, `drifted`→`feature_drift`, `severe_drift`→`regression`. Approach C is `POST /joint-retrain`. There is no MinIO on kind.
+
+Published Table 3 files (`approach_comparison_{profile}_kind.json`) are not overwritten unless you pass `--overwrite-published`. For an n≥3 replica on a **dedicated** model (so `churn-predictor`'s champion does not walk):
+
+```bash
+evaluation/.venv/bin/python evaluation/approach_comparison.py --runtime k8s --model paper-b-abc --profile drifted --repeats 3
+```
+
+That writes `approach_comparison_{profile}_kind_repeats.json`. Bring the kind cluster up from Paper A's `code/k8s/deploy-local-eks.sh` first. Every kubectl call stays on `--context kind-dact-local-eks`.
 
 ## Compose (archived snapshot)
 

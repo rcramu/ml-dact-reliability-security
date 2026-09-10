@@ -3,7 +3,7 @@
 
 Protocol: as an engineer who did NOT build this stack, attempt to add a
 SECOND monitored model using ONLY the existing documentation (README.md,
-EVALUATION.md, the OpenAPI docs at /docs, and the routers' own docstrings)
+docs/eval.md, the OpenAPI docs at /docs, and the routers' own docstrings)
 before reading pipeline_engine.py/seed.py source.
 
 IMPORTANT HONESTY NOTE: this script does NOT claim a numeric "documentation
@@ -163,7 +163,7 @@ def main() -> None:
 
     doc_log = [
         "Checked README.md (top-level project description, docker-compose usage) — no model-management section.",
-        "Checked code/EVALUATION.md (harness usage) — describes evaluation tooling only, not model onboarding.",
+        "Checked docs/eval.md (harness usage) — describes evaluation tooling only, not model onboarding.",
         "Checked OpenAPI docs (GET /docs) route list — every write route takes an existing {model} path param "
         "(POST /{model}/training, /{model}/monitoring/check, /{model}/rollback); no POST /api/v1/models create route.",
         "Grepped backend/app/routers/*.py for @router.post|@router.put directly to confirm — 5 matches, none creates a model.",

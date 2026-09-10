@@ -20,6 +20,13 @@ BACKEND_URL = os.environ.get("DACT_BACKEND_URL", "http://127.0.0.1:8166")
 MLFLOW_URL = os.environ.get("DACT_MLFLOW_URL", "http://127.0.0.1:5026")
 MODEL = os.environ.get("DACT_MODEL", "churn-predictor")
 
+
+def set_model(name: str) -> str:
+    """Override the kind model for a dedicated A/B/C replica (does not change env permanently)."""
+    global MODEL
+    MODEL = name
+    return MODEL
+
 _UUID_RE = re.compile(
     r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
 )

@@ -130,6 +130,57 @@ def figure_abc_kind(comparison_data: dict) -> None:
     print(f"Wrote {out}")
 
 
+def figure_kind_matrix() -> None:
+    """3×3 kind-window gate outcomes from the published Table 3 JSON (n=1 per cell)."""
+    profiles = [
+        ("stable", "healthy"),
+        ("drifted", "feature_drift"),
+        ("severe_drift", "regression"),
+    ]
+    approaches = [("approach_a", "A"), ("approach_b", "B"), ("approach_c", "C")]
+    fig, ax = plt.subplots(figsize=(7.2, 4.2))
+    ax.set_xlim(-0.5, 2.5)
+    ax.set_ylim(-0.5, 2.5)
+    ax.set_xticks([0, 1, 2])
+    ax.set_xticklabels(["A manual", "B scheduled", "C closed-loop"])
+    ax.set_yticks([0, 1, 2])
+    ax.set_yticklabels(["regression", "feature_drift", "healthy"])
+    ax.set_title("Table 3 — Kind 3×3 gate outcomes (n=1 per cell)")
+    for row, (profile, scenario) in enumerate(reversed(profiles)):
+        path = RESULTS_DIR / f"approach_comparison_{profile}_kind.json"
+        if not path.exists():
+            continue
+        data = json.loads(path.read_text())
+        for col, (key, _label) in enumerate(approaches):
+            block = data[key]
+            raw = (block.get("pipeline_outcome") or "n/a").upper()
+            if raw in {"MODEL_NOT_PROMOTED", "REJECTED"}:
+                outcome = "REJECTED"
+            elif raw == "PROMOTED":
+                outcome = "PROMOTED"
+            else:
+                outcome = raw
+            live = bool(block.get("triggered_retrain_live"))
+            if outcome == "PROMOTED":
+                face = "#c8e6c9"
+            elif key == "approach_c" and not live:
+                face = "#fff3cd"
+                outcome = "HOLD"
+            else:
+                face = "#ffcdd2"
+            ax.add_patch(plt.Rectangle((col - 0.45, row - 0.45), 0.9, 0.9, facecolor=face, edgecolor="#333"))
+            ax.text(col, row + 0.08, outcome, ha="center", va="center", fontsize=9, fontweight="bold")
+            f1 = block.get("candidate_test_f1")
+            if f1 is not None:
+                ax.text(col, row - 0.22, f"F1 {f1:.3f}", ha="center", va="center", fontsize=7, color="#333")
+    ax.set_aspect("equal")
+    fig.tight_layout()
+    FIGURES_DIR.mkdir(exist_ok=True)
+    out = FIGURES_DIR / "figure6_kind_design_matrix.png"
+    fig.savefig(out, dpi=150)
+    print(f"Wrote {out}")
+
+
 def main() -> None:
     kind_fault = RESULTS_DIR / "fault_injection_kind.json"
     kind_abc = RESULTS_DIR / "approach_comparison_drifted_kind.json"
@@ -141,6 +192,7 @@ def main() -> None:
         figure_abc_kind(json.loads(kind_abc.read_text()))
     else:
         print("skip kind A/B/C: no approach_comparison_drifted_kind.json")
+    figure_kind_matrix()
 
 
 if __name__ == "__main__":
