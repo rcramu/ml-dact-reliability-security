@@ -49,8 +49,8 @@ Do not overwrite `evaluation/results/fault_injection.json` or `approach_comparis
 
 ## Other scripts
 
-`security_scan.py` and `maintainability_metrics.py` are static. `make_figures.py` reads `evaluation/results/`. STRIDE for kind is `evaluation/threat_model_kind.md`.
+`security_scan.py` and `maintainability_metrics.py` are static. Linux `pip-audit --disable-pip --no-deps` on `backend/requirements.txt` (image `python:3.11-bookworm`) writes `evaluation/results/pip_audit_linux.json`. `make_figures.py` reads `evaluation/results/`. STRIDE for kind is `evaluation/threat_model_kind.md`.
 
 ## Known limitations
 
-Code churn is now a short-window measurement over this deposit's git history (`maintainability_metrics.json`): SUT modules are archive-commit additions only; later churn is concentrated in `evaluation/`. Kind A/B/C cells are n=1 per scenario. Kind backend self-heal is measured against a 30 s `/ready` bound, not “the Deployment eventually created a pod.”
+Code churn is a short-window measurement over this deposit's git history (`maintainability_metrics.json`): SUT modules are archive-commit additions only; later churn is concentrated in `evaluation/`. Kind A/B/C cells are n=1 per scenario. Kind backend self-heal is measured against a 30 s `/ready` bound, not “the Deployment eventually created a pod.” Host `pip-audit` cannot build `scipy`/`psycopg2-binary`; the Linux `--no-deps` run still does not resolve transitives.
