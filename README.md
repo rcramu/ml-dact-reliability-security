@@ -13,7 +13,7 @@ How to regenerate results: [`docs/eval.md`](docs/eval.md).
 | Path | Role |
 | --- | --- |
 | `backend/`, `airflow/`, `frontend/`, `db/`, `observability/`, `docker-compose.yml` | Archived Compose snapshot (`cmp_` containers; model `customer-churn`) |
-| `docs/eval.md` | How to regenerate Tables 1–3 |
+| `docs/` | Case notes; [`docs/eval.md`](docs/eval.md) is how to regenerate Tables 1–3 |
 | `evaluation/` | Harness scripts (`--runtime k8s\|compose`) |
 | `evaluation/results/` | **Data folder** — captured JSON for Tables 1–3 (see `evaluation/results/README.md`) |
 | `figures/` | Generated PNGs used in the paper |
