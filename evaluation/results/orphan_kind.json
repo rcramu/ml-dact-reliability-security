@@ -1,0 +1,234 @@
+{
+  "generated_at": "2026-09-10T18:12:02.777021+00:00",
+  "runtime": "k8s",
+  "kind_context": "kind-dact-local-eks",
+  "protocol": "Observe-only. SELECT count(*) FROM pg_stat_activity WHERE state = 'idle in transaction' via k8s_runtime.psql (kubectl --context kind-dact-local-eks exec deploy/postgres). Backend-kill trials are companion observations; Table 1 file is not overwritten.",
+  "trials": 5,
+  "observations": [
+    {
+      "label": "before",
+      "at": "2026-09-10T18:10:49.505864+00:00",
+      "idle_in_transaction": 0,
+      "psql_idle_returncode": 0,
+      "psql_idle_stderr": null,
+      "session_states": {
+        "active |": 1,
+        "idle |": 8,
+        "null |": 5
+      },
+      "raw_idle_stdout": "count \n-------\n     0\n(1 row)"
+    },
+    {
+      "label": "after_trial_1",
+      "at": "2026-09-10T18:11:06.520444+00:00",
+      "idle_in_transaction": 0,
+      "psql_idle_returncode": 0,
+      "psql_idle_stderr": null,
+      "session_states": {
+        "active |": 1,
+        "idle |": 8,
+        "null |": 5
+      },
+      "raw_idle_stdout": "count \n-------\n     0\n(1 row)"
+    },
+    {
+      "label": "after_trial_2",
+      "at": "2026-09-10T18:11:20.647516+00:00",
+      "idle_in_transaction": 0,
+      "psql_idle_returncode": 0,
+      "psql_idle_stderr": null,
+      "session_states": {
+        "active |": 1,
+        "idle |": 8,
+        "null |": 5
+      },
+      "raw_idle_stdout": "count \n-------\n     0\n(1 row)"
+    },
+    {
+      "label": "after_trial_3",
+      "at": "2026-09-10T18:11:34.763793+00:00",
+      "idle_in_transaction": 0,
+      "psql_idle_returncode": 0,
+      "psql_idle_stderr": null,
+      "session_states": {
+        "active |": 1,
+        "idle |": 8,
+        "null |": 5
+      },
+      "raw_idle_stdout": "count \n-------\n     0\n(1 row)"
+    },
+    {
+      "label": "after_trial_4",
+      "at": "2026-09-10T18:11:48.623608+00:00",
+      "idle_in_transaction": 0,
+      "psql_idle_returncode": 0,
+      "psql_idle_stderr": null,
+      "session_states": {
+        "active |": 1,
+        "idle |": 8,
+        "null |": 5
+      },
+      "raw_idle_stdout": "count \n-------\n     0\n(1 row)"
+    },
+    {
+      "label": "after_trial_5",
+      "at": "2026-09-10T18:12:02.587538+00:00",
+      "idle_in_transaction": 0,
+      "psql_idle_returncode": 0,
+      "psql_idle_stderr": null,
+      "session_states": {
+        "active |": 1,
+        "idle |": 8,
+        "null |": 5
+      },
+      "raw_idle_stdout": "count \n-------\n     0\n(1 row)"
+    },
+    {
+      "label": "end",
+      "at": "2026-09-10T18:12:02.776936+00:00",
+      "idle_in_transaction": 0,
+      "psql_idle_returncode": 0,
+      "psql_idle_stderr": null,
+      "session_states": {
+        "active |": 1,
+        "idle |": 8,
+        "null |": 5
+      },
+      "raw_idle_stdout": "count \n-------\n     0\n(1 row)"
+    }
+  ],
+  "idle_in_transaction_series": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "idle_in_transaction_max": 0,
+  "idle_accumulated": false,
+  "companion_backend_kill_summaries": [
+    {
+      "fault": "backend_kill_inflight",
+      "description": "kind: kubectl delete pod -l app=backend while POST /training is in flight",
+      "trials": [
+        {
+          "trial": 1,
+          "client_saw_exception": false,
+          "client_exception_type": null,
+          "auto_restart_mttr_seconds": 14.29,
+          "manual_intervention_required": false,
+          "manual_intervention_mttr_seconds": null,
+          "wallclock_from_kill_command_s": 14.744,
+          "designed_auto_heal_bound_s": 30.0,
+          "orphaned_running_run": false,
+          "most_recent_run_status": "REJECTED"
+        }
+      ],
+      "auto_restart_mttr_seconds_avg": 14.29,
+      "auto_restart_mttr_seconds_sd": null,
+      "manual_intervention_required_count": 0,
+      "manual_intervention_mttr_seconds_avg": null,
+      "availability": 1.0,
+      "error_rate": 0.0
+    },
+    {
+      "fault": "backend_kill_inflight",
+      "description": "kind: kubectl delete pod -l app=backend while POST /training is in flight",
+      "trials": [
+        {
+          "trial": 1,
+          "client_saw_exception": false,
+          "client_exception_type": null,
+          "auto_restart_mttr_seconds": 11.387,
+          "manual_intervention_required": false,
+          "manual_intervention_mttr_seconds": null,
+          "wallclock_from_kill_command_s": 11.833,
+          "designed_auto_heal_bound_s": 30.0,
+          "orphaned_running_run": false,
+          "most_recent_run_status": "REJECTED"
+        }
+      ],
+      "auto_restart_mttr_seconds_avg": 11.387,
+      "auto_restart_mttr_seconds_sd": null,
+      "manual_intervention_required_count": 0,
+      "manual_intervention_mttr_seconds_avg": null,
+      "availability": 1.0,
+      "error_rate": 0.0
+    },
+    {
+      "fault": "backend_kill_inflight",
+      "description": "kind: kubectl delete pod -l app=backend while POST /training is in flight",
+      "trials": [
+        {
+          "trial": 1,
+          "client_saw_exception": false,
+          "client_exception_type": null,
+          "auto_restart_mttr_seconds": 11.399,
+          "manual_intervention_required": false,
+          "manual_intervention_mttr_seconds": null,
+          "wallclock_from_kill_command_s": 11.857,
+          "designed_auto_heal_bound_s": 30.0,
+          "orphaned_running_run": false,
+          "most_recent_run_status": "REJECTED"
+        }
+      ],
+      "auto_restart_mttr_seconds_avg": 11.399,
+      "auto_restart_mttr_seconds_sd": null,
+      "manual_intervention_required_count": 0,
+      "manual_intervention_mttr_seconds_avg": null,
+      "availability": 1.0,
+      "error_rate": 0.0
+    },
+    {
+      "fault": "backend_kill_inflight",
+      "description": "kind: kubectl delete pod -l app=backend while POST /training is in flight",
+      "trials": [
+        {
+          "trial": 1,
+          "client_saw_exception": false,
+          "client_exception_type": null,
+          "auto_restart_mttr_seconds": 11.088,
+          "manual_intervention_required": false,
+          "manual_intervention_mttr_seconds": null,
+          "wallclock_from_kill_command_s": 11.606,
+          "designed_auto_heal_bound_s": 30.0,
+          "orphaned_running_run": false,
+          "most_recent_run_status": "REJECTED"
+        }
+      ],
+      "auto_restart_mttr_seconds_avg": 11.088,
+      "auto_restart_mttr_seconds_sd": null,
+      "manual_intervention_required_count": 0,
+      "manual_intervention_mttr_seconds_avg": null,
+      "availability": 1.0,
+      "error_rate": 0.0
+    },
+    {
+      "fault": "backend_kill_inflight",
+      "description": "kind: kubectl delete pod -l app=backend while POST /training is in flight",
+      "trials": [
+        {
+          "trial": 1,
+          "client_saw_exception": false,
+          "client_exception_type": null,
+          "auto_restart_mttr_seconds": 11.264,
+          "manual_intervention_required": false,
+          "manual_intervention_mttr_seconds": null,
+          "wallclock_from_kill_command_s": 11.726,
+          "designed_auto_heal_bound_s": 30.0,
+          "orphaned_running_run": false,
+          "most_recent_run_status": "REJECTED"
+        }
+      ],
+      "auto_restart_mttr_seconds_avg": 11.264,
+      "auto_restart_mttr_seconds_sd": null,
+      "manual_intervention_required_count": 0,
+      "manual_intervention_mttr_seconds_avg": null,
+      "availability": 1.0,
+      "error_rate": 0.0
+    }
+  ],
+  "table1_file_untouched": "fault_injection_kind.json"
+}

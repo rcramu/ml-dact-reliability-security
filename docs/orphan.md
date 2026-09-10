@@ -8,4 +8,10 @@ Observe only, via `evaluation/k8s_runtime.py` (`kubectl --context kind-dact-loca
 SELECT count(*) FROM pg_stat_activity WHERE state = 'idle in transaction';
 ```
 
-Run once before `fault_injection.py --runtime k8s` backend-kill trials, once after each trial, once at the end. Write counts to `evaluation/results/orphan_kind.json` when the cluster is up. Do not use the default kubecontext.
+```bash
+evaluation/.venv/bin/python evaluation/orphan_observe.py --trials 5
+```
+
+Writes `evaluation/results/orphan_kind.json`. Does not overwrite Table 1 (`fault_injection_kind.json`). Do not use the default kubecontext.
+
+Captured 2026-09-10: `idle in transaction` stayed **0** before, after each of five backend-pod kills, and at the end. Companion `/ready` times in that window were 11.1–14.3 s; they do not replace Table 1.
