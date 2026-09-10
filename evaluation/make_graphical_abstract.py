@@ -43,7 +43,7 @@ def main() -> None:
     fig.text(
         0.5,
         0.94,
-        "Reliability and security evaluation of a closed-loop MLOps stack",
+        "Empirical reliability and security of drift-aware continuous training",
         ha="center",
         va="center",
         fontsize=15,
@@ -53,7 +53,7 @@ def main() -> None:
     fig.text(
         0.5,
         0.87,
-        "Companion to JSSOFTWARE-D-26-02282  ·  Compose snapshot  ·  measured, not estimated",
+        "Companion to JSSOFTWARE-D-26-02282  ·  kind dact-local-eks + Compose window  ·  measured",
         ha="center",
         va="center",
         fontsize=9,
@@ -63,12 +63,12 @@ def main() -> None:
     gs = fig.add_gridspec(1, 3, left=0.03, right=0.97, bottom=0.08, top=0.80, wspace=0.04)
     _panel(
         fig.add_subplot(gs[0, 0]),
-        "Reliability  (n=5 faults)",
+        "Reliability  (kind, n=5)",
         [
-            "Backend kill: no self-heal",
-            "Manual start 3.69 ± 1.09 s",
-            "MLflow / MinIO: hang ≥30 s",
-            "Rollback restored prior champion",
+            "Backend pod: 1/5 /ready in 30 s",
+            "MLflow down: train hung ≥45 s",
+            "MinIO not deployed on kind",
+            "Rollback v7→v1 in 0.76 s",
         ],
         "#e3f0ff",
     )
@@ -85,12 +85,12 @@ def main() -> None:
     )
     _panel(
         fig.add_subplot(gs[0, 2]),
-        "A/B/C  (9 live runs)",
+        "A/B/C  (kind, 9 runs)",
         [
-            "C / A detect in seconds",
+            "C fired on feature_drift",
+            "C held on healthy / regression",
             "B waits avg 3.5 scheduled days",
-            "Gate rejected 9/9 on recall",
-            "C never auto-fired (GOOD eval)",
+            "Compose: 0/9 pass; F1-only 6/9",
         ],
         "#e7f6ee",
     )

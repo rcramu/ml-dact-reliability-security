@@ -1,14 +1,9 @@
 #!/usr/bin/env python3
-"""Maintainability metrics for the cmp_ reference stack (Paper B, Section 6.4).
+"""Maintainability metrics for the Paper B deposit (Section 6.4).
 
 Computes cyclomatic complexity (McCabe [13]) and lines-of-code per module via
-`radon`, real static measurements against the actual backend/app and
-airflow/dags source trees — not estimates.
-
-Code churn (Nagappan & Ball [14]) requires commit history; this project has
-no VCS (`git log` fails with "not a git repository"), so churn is reported as
-unavailable rather than fabricated — see the honest-limitation note this
-script prints and the corresponding note in the manuscript.
+`radon`, plus short-window Nagappan–Ball [14] churn over this repository's
+git history (history starts at the archive commit).
 
 Onboarding lead time is a task-based, human-timed metric and is NOT computed
 here — see evaluation/onboarding_protocol.md for the manual protocol.
@@ -37,18 +32,57 @@ def _radon(venv_python: str, *args: str) -> subprocess.CompletedProcess:
     return subprocess.run([venv_python, "-m", "radon", *args], capture_output=True, text=True)
 
 
+def _churn_for_prefix(rel: str) -> dict:
+    """Nagappan-Ball style added+deleted over the deposit git history."""
+    proc = subprocess.run(
+        ["git", "-C", str(PROJECT_ROOT), "log", "--numstat", "--pretty=format:", "--", rel],
+        capture_output=True,
+        text=True,
+    )
+    added = deleted = 0
+    files: set[str] = set()
+    for line in proc.stdout.splitlines():
+        parts = line.split("\t")
+        if len(parts) < 3:
+            continue
+        a, d, path = parts[0], parts[1], parts[2]
+        if a == "-" or d == "-":
+            continue
+        added += int(a)
+        deleted += int(d)
+        files.add(path)
+    return {
+        "path": rel,
+        "files_touched": len(files),
+        "lines_added": added,
+        "lines_deleted": deleted,
+        "churn": added + deleted,
+    }
+
+
 def _check_git_history() -> dict:
-    result = subprocess.run(["git", "-C", str(PROJECT_ROOT), "log", "--oneline", "-n", "1"],
+    result = subprocess.run(["git", "-C", str(PROJECT_ROOT), "log", "--oneline"],
                              capture_output=True, text=True)
-    available = result.returncode == 0
+    available = result.returncode == 0 and bool(result.stdout.strip())
+    commits = [line for line in result.stdout.splitlines() if line.strip()] if available else []
+    prefixes = [
+        "backend/app/ml",
+        "backend/app/routers",
+        "backend/app/integrations",
+        "airflow/dags",
+        "evaluation",
+    ]
+    by_module = {p: _churn_for_prefix(p) for p in prefixes} if available else {}
     return {
         "available": available,
+        "commit_count": len(commits),
+        "commits": commits[:20],
+        "by_module": by_module,
         "note": (
-            "git history available" if available else
-            "no VCS history in this project (`git log` failed: "
-            f"{result.stderr.strip()!r}) — code churn (Nagappan & Ball, ref [14]) "
-            "cannot be computed without commit history and is reported as N/A, "
-            "not estimated. Cyclomatic complexity and LOC below do not depend on VCS history."
+            "Short-window churn on this public deposit only (history starts at the "
+            "archive commit). Not a multi-year industrial churn study."
+            if available else
+            "no VCS history — code churn reported as N/A, not estimated."
         ),
     }
 

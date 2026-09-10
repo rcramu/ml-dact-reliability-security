@@ -1,0 +1,53 @@
+{
+  "generated_at": "2026-09-10T00:03:02.085413+00:00",
+  "runtime": "k8s",
+  "backend": "http://127.0.0.1:8166",
+  "new_model": "paper-b-onboard-trial",
+  "task": "Add a second monitored model, following only existing documentation, then verify + clean up",
+  "step1_documentation_review": {
+    "elapsed_seconds": null,
+    "honesty_note": "Not measured. A genuine onboarding-lead-time duration requires a truly naive participant who has not already worked with this codebase; the authors/agent producing this result already know the codebase, so any duration claimed here would be fabricated, not measured. Reported instead as a qualitative, independently-verifiable finding (see 'finding' below) plus a real, task-based proxy: Step 2's mechanical DB-onboarding time.",
+    "log": [
+      "Checked README.md (top-level project description, docker-compose usage) \u2014 no model-management section.",
+      "Checked code/EVALUATION.md (harness usage) \u2014 describes evaluation tooling only, not model onboarding.",
+      "Checked OpenAPI docs (GET /docs) route list \u2014 every write route takes an existing {model} path param (POST /{model}/training, /{model}/monitoring/check, /{model}/rollback); no POST /api/v1/models create route.",
+      "Grepped backend/app/routers/*.py for @router.post|@router.put directly to confirm \u2014 5 matches, none creates a model.",
+      "Conclusion: onboarding a new model requires backend source/DB access (seed.py pattern), not a documented API call."
+    ],
+    "finding": "No documented/API path exists to add a model \u2014 every write endpoint requires an existing model name; onboarding requires direct backend code/DB access (seed.py's own pattern)."
+  },
+  "step2_db_level_onboarding": {
+    "elapsed_seconds": 43.089,
+    "method": "kubectl --context kind-dact-local-eks exec deploy/backend -- python -c ...",
+    "result": {
+      "model_id": "337d7be4-a974-4e05-9300-ae72a35e0d79",
+      "run_id": "37ca099f-42d2-4b36-82e9-031bf0ed9eb0",
+      "run_status": "SUCCESS",
+      "run_outcome": "PROMOTED"
+    }
+  },
+  "step3_verification": {
+    "new_model_listed_in_GET_models": true,
+    "independent_monitoring_check_result": {
+      "model": "paper-b-onboard-trial",
+      "scenario": "healthy",
+      "seed": 42,
+      "psi_mean": 0.0097,
+      "drift_level": "NORMAL",
+      "champion_version": 1,
+      "champion_f1_on_batch": 0.7854,
+      "n_test": 225,
+      "evaluation_level": "GOOD",
+      "matrix_cell": "Continue",
+      "joint_retrain": false,
+      "predicate": "Retrain = (DriftLevel == SIGNIFICANT) and (EvaluationLevel != GOOD)"
+    }
+  },
+  "step4_cleanup": {
+    "cleanup_stdout": "cleaned up: paper-b-onboard-trial",
+    "cleanup_stderr": null,
+    "model_still_listed_after_cleanup": false
+  },
+  "total_elapsed_seconds": null,
+  "total_elapsed_note": "Only Step 2's mechanical time is a real measurement (see above); no total is reported since Step 1's duration was not honestly measurable in this session."
+}

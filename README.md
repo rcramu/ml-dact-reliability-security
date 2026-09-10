@@ -2,9 +2,9 @@
 
 Public deposit for the companion JSS manuscript:
 
-**Reliability and Security Evaluation of a Closed-Loop MLOps System: A Comparative Study Against Manual and Scheduled Retraining**
+**An Empirical Reliability and Security Evaluation of Drift-Aware Continuous Training**
 
-This repository is the archived Docker Compose snapshot of the system under test plus the evaluation harness that produced Tables 1–3 and Figures 4–8. It is the empirical companion to [ml-dact](https://github.com/rcramu/ml-dact) / JSS manuscript **JSSOFTWARE-D-26-02282** (*Quality-Gated Continuous Training under Drift: An Observational Case Study of an Inspectable MLOps Architecture*).
+This repository is the archived Docker Compose snapshot plus the evaluation harness (`--runtime k8s|compose`) that produced Tables 1–3. The **primary** measurement window is Paper A's kind cluster (`dact-local-eks`, context `kind-dact-local-eks` only; model `churn-predictor`). Compose (`cmp_*`, `customer-churn`) is the archived second window. Companion: [ml-dact](https://github.com/rcramu/ml-dact) / **JSSOFTWARE-D-26-02282**.
 
 How to regenerate results: [`EVALUATION.md`](EVALUATION.md).
 
@@ -13,11 +13,12 @@ How to regenerate results: [`EVALUATION.md`](EVALUATION.md).
 | Path | Role |
 | --- | --- |
 | `backend/`, `airflow/`, `frontend/`, `db/`, `observability/`, `docker-compose.yml` | Archived Compose snapshot (`cmp_` containers; model `customer-churn`) |
-| `evaluation/` | Fault injection, security scan, STRIDE notes, maintainability metrics, A/B/C comparison, onboarding trial, figure scripts, captured JSON |
+| `evaluation/` | Harness scripts (`--runtime k8s\|compose`) |
+| `evaluation/results/` | **Data folder** — captured JSON for Tables 1–3 (see `evaluation/results/README.md`) |
 | `figures/` | Generated PNGs used in the paper |
 | `.env.example` | Non-secret timing overrides only |
 
-This is **not** an Amazon EKS or kind deployment. Paper A's kind-seed measurements live in [ml-dact](https://github.com/rcramu/ml-dact). Treat the two repositories as two observation windows on the same architecture family.
+Kind deploy lives in [ml-dact](https://github.com/rcramu/ml-dact) `code/k8s/`. This repo's harness talks to that cluster only via `--context kind-dact-local-eks` (`evaluation/k8s_runtime.py`). Never use the default kubecontext.
 
 ## Quick start (Docker Compose)
 
@@ -43,7 +44,7 @@ docker compose down -v       # delete volumes (fresh reseed on next up)
 
 Static analyses (`maintainability_metrics.py`, dependency/`npm audit` parts of `security_scan.py`) and figure regeneration (`make_figures.py`, `make_cascade_figure.py`, `make_stride_figure.py`) need no running containers.
 
-Live scripts (`fault_injection.py`, `approach_comparison.py`, `onboarding_trial.py`, and `docker scout` in `security_scan.py`) target container names `cmp_backend`, `cmp_mlflow`, `cmp_minio` and ports `8170` / `5030` / `9370`. Bring this folder up with `docker compose up -d --build`, then see [`EVALUATION.md`](EVALUATION.md).
+Live scripts accept `--runtime k8s` (kind, port 8166) or `--runtime compose` (`cmp_*`, port 8170). See [`EVALUATION.md`](EVALUATION.md).
 
 ```bash
 python3 -m venv evaluation/.venv

@@ -1,0 +1,200 @@
+{
+  "generated_at": "2026-09-10T00:03:02.193212+00:00",
+  "rule": "F1-only pass iff candidate_test_f1 >= champion_f1 (equivalently gate_regression_pct <= 0)",
+  "compose_window": {
+    "n_candidates": 9,
+    "live_gate_promoted_count": 0,
+    "f1_only_would_pass_count": 6,
+    "f1_only_would_fail_count": 3,
+    "rows": [
+      {
+        "profile": "stable",
+        "approach": "A - Manual",
+        "candidate_test_f1": 0.8113,
+        "champion_f1": 0.7948717948717948,
+        "gate_regression_pct": -2.07,
+        "gate_reasons": "candidate recall 0.905 below champion recall 0.979",
+        "live_gate_promoted": false,
+        "f1_only_would_pass": true
+      },
+      {
+        "profile": "stable",
+        "approach": "B - Scheduled (weekly)",
+        "candidate_test_f1": 0.7982,
+        "champion_f1": 0.7948717948717948,
+        "gate_regression_pct": -0.41,
+        "gate_reasons": "candidate recall 0.791 below champion recall 0.979",
+        "live_gate_promoted": false,
+        "f1_only_would_pass": true
+      },
+      {
+        "profile": "stable",
+        "approach": "C - Closed-loop",
+        "candidate_test_f1": 0.8491,
+        "champion_f1": 0.7948717948717948,
+        "gate_regression_pct": -6.82,
+        "gate_reasons": "candidate recall 0.857 below champion recall 0.979",
+        "live_gate_promoted": false,
+        "f1_only_would_pass": true
+      },
+      {
+        "profile": "drifted",
+        "approach": "A - Manual",
+        "candidate_test_f1": 0.8273,
+        "champion_f1": 0.7948717948717948,
+        "gate_regression_pct": -4.08,
+        "gate_reasons": "candidate recall 0.843 below champion recall 0.979",
+        "live_gate_promoted": false,
+        "f1_only_would_pass": true
+      },
+      {
+        "profile": "drifted",
+        "approach": "B - Scheduled (weekly)",
+        "candidate_test_f1": 0.8304,
+        "champion_f1": 0.7948717948717948,
+        "gate_regression_pct": -4.46,
+        "gate_reasons": "candidate recall 0.930 below champion recall 0.979",
+        "live_gate_promoted": false,
+        "f1_only_would_pass": true
+      },
+      {
+        "profile": "drifted",
+        "approach": "C - Closed-loop",
+        "candidate_test_f1": 0.7847,
+        "champion_f1": 0.7948717948717948,
+        "gate_regression_pct": 1.28,
+        "gate_reasons": "candidate recall 0.804 below champion recall 0.979",
+        "live_gate_promoted": false,
+        "f1_only_would_pass": false
+      },
+      {
+        "profile": "severe_drift",
+        "approach": "A - Manual",
+        "candidate_test_f1": 0.8468,
+        "champion_f1": 0.7948717948717948,
+        "gate_regression_pct": -6.54,
+        "gate_reasons": "candidate recall 0.922 below champion recall 0.979",
+        "live_gate_promoted": false,
+        "f1_only_would_pass": true
+      },
+      {
+        "profile": "severe_drift",
+        "approach": "B - Scheduled (weekly)",
+        "candidate_test_f1": 0.7807,
+        "champion_f1": 0.7948717948717948,
+        "gate_regression_pct": 1.78,
+        "gate_reasons": "candidate recall 0.768 below champion recall 0.979",
+        "live_gate_promoted": false,
+        "f1_only_would_pass": false
+      },
+      {
+        "profile": "severe_drift",
+        "approach": "C - Closed-loop",
+        "candidate_test_f1": 0.7579,
+        "champion_f1": 0.7948717948717948,
+        "gate_regression_pct": 4.65,
+        "gate_reasons": "candidate recall 0.727 below champion recall 0.979",
+        "live_gate_promoted": false,
+        "f1_only_would_pass": false
+      }
+    ]
+  },
+  "kind_window": {
+    "n_candidates": 9,
+    "live_gate_promoted_count": 3,
+    "f1_only_would_pass_count": 3,
+    "f1_only_would_fail_count": 6,
+    "rows": [
+      {
+        "profile": "stable",
+        "approach": "A - Manual",
+        "candidate_test_f1": 0.7708,
+        "champion_f1": 0.8181818181818182,
+        "gate_regression_pct": 5.79,
+        "gate_reasons": "candidate recall 0.747 below champion recall 0.909",
+        "live_gate_promoted": false,
+        "f1_only_would_pass": false
+      },
+      {
+        "profile": "stable",
+        "approach": "B - Scheduled (weekly)",
+        "candidate_test_f1": 0.7961,
+        "champion_f1": 0.8181818181818182,
+        "gate_regression_pct": 2.7,
+        "gate_reasons": "candidate recall 0.901 below champion recall 0.909",
+        "live_gate_promoted": false,
+        "f1_only_would_pass": false
+      },
+      {
+        "profile": "stable",
+        "approach": "C - Closed-loop",
+        "candidate_test_f1": 0.7926,
+        "champion_f1": 0.8181818181818182,
+        "gate_regression_pct": 3.12,
+        "gate_reasons": "candidate recall 0.851 below champion recall 0.909",
+        "live_gate_promoted": false,
+        "f1_only_would_pass": false
+      },
+      {
+        "profile": "drifted",
+        "approach": "A - Manual",
+        "candidate_test_f1": 0.9659,
+        "champion_f1": 0.9659,
+        "gate_regression_pct": -0.57,
+        "gate_reasons": "All gate conditions satisfied: minimum F1/precision/recall met and regression -0.57% within 10.00% budget.",
+        "live_gate_promoted": true,
+        "f1_only_would_pass": true
+      },
+      {
+        "profile": "drifted",
+        "approach": "B - Scheduled (weekly)",
+        "candidate_test_f1": 0.9604,
+        "champion_f1": 0.9604,
+        "gate_regression_pct": -1.38,
+        "gate_reasons": "All gate conditions satisfied: minimum F1/precision/recall met and regression -1.38% within 10.00% budget.",
+        "live_gate_promoted": true,
+        "f1_only_would_pass": true
+      },
+      {
+        "profile": "drifted",
+        "approach": "C - Closed-loop",
+        "candidate_test_f1": 0.9474,
+        "champion_f1": 0.9474,
+        "gate_regression_pct": -15.79,
+        "gate_reasons": "All gate conditions satisfied: minimum F1/precision/recall met and regression -15.79% within 10.00% budget.",
+        "live_gate_promoted": true,
+        "f1_only_would_pass": true
+      },
+      {
+        "profile": "severe_drift",
+        "approach": "A - Manual",
+        "candidate_test_f1": 0.7154,
+        "champion_f1": 0.9658536585365853,
+        "gate_regression_pct": 25.93,
+        "gate_reasons": "F1 regression 25.93% exceeds max allowed 10.00% (champion 0.966 -> candidate 0.715); candidate recall 0.846 below champion recall 0.975",
+        "live_gate_promoted": false,
+        "f1_only_would_pass": false
+      },
+      {
+        "profile": "severe_drift",
+        "approach": "B - Scheduled (weekly)",
+        "candidate_test_f1": 0.7143,
+        "champion_f1": 0.9658536585365853,
+        "gate_regression_pct": 26.05,
+        "gate_reasons": "candidate precision 0.594 below minimum 0.600; F1 regression 26.05% exceeds max allowed 10.00% (champion 0.966 -> candidate 0.714); candidate recall 0.896 below champion recall 0.975",
+        "live_gate_promoted": false,
+        "f1_only_would_pass": false
+      },
+      {
+        "profile": "severe_drift",
+        "approach": "C - Closed-loop",
+        "candidate_test_f1": 0.692,
+        "champion_f1": 0.9658536585365853,
+        "gate_regression_pct": 28.35,
+        "gate_reasons": "candidate F1 0.692 below minimum 0.700; candidate precision 0.572 below minimum 0.600; F1 regression 28.35% exceeds max allowed 10.00% (champion 0.966 -> candidate 0.692); candidate recall 0.875 below champion recall 0.975",
+        "live_gate_promoted": false,
+        "f1_only_would_pass": false
+      }
+    ]
+  }
+}
