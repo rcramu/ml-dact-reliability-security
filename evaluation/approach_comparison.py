@@ -50,18 +50,18 @@ KIND_PROFILE_TO_SCENARIO = {
 
 
 class Target:
-    def __init__(self, runtime: str):
+    def __init__(self, runtime: str, model: str | None = None):
         self.runtime = runtime
         if runtime == "k8s":
-            from k8s_runtime import BACKEND_URL, MODEL, assert_kind_context
+            from k8s_runtime import BACKEND_URL, MODEL, assert_kind_context, set_model
 
             assert_kind_context()
             self.backend = BACKEND_URL
-            self.model = MODEL
+            self.model = set_model(model) if model else MODEL
             self.train_timeout = 300.0
         else:
             self.backend = "http://localhost:8170"
-            self.model = "customer-churn"
+            self.model = model or "customer-churn"
             self.train_timeout = 120.0
 
     def current_champion(self) -> dict:
@@ -310,41 +310,83 @@ def run_approach_a(target: Target, profile: str, scenario: str) -> dict:
     return result
 
 
+def _one_matrix_cell(target: Target, profile: str, scenario: str) -> dict:
+    pre = target.current_champion()
+    report = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "runtime": target.runtime,
+        "profile": profile,
+        "scenario": scenario,
+        "model": target.model,
+        "backend": target.backend,
+        "pre_champion_version": pre.get("version"),
+        "methodology_note": (
+            "All three approaches use the same 16-stage training pipeline. "
+            + (
+                f"Kind window: generator scenario='{scenario}' (profile {profile} mapped). "
+                "Approach C uses POST /joint-retrain; A polls GET /joint-cell."
+                if target.runtime == "k8s"
+                else "Compose window: scenario='feature_drift'; A/C use POST /monitoring/check."
+            )
+        ),
+        "approach_c": run_approach_c(target, profile, scenario),
+        "approach_b": run_approach_b(target, scenario),
+        "approach_a": run_approach_a(target, profile, scenario),
+    }
+    post = target.current_champion()
+    report["post_champion_version"] = post.get("version")
+    report["champion_walked"] = pre.get("version") != post.get("version")
+    return report
+
+
+def _write_report(path: Path, payload: dict) -> Path:
+    RESULTS_DIR.mkdir(exist_ok=True)
+    path.write_text(json.dumps(payload, indent=2, default=str))
+    print(f"Wrote {path}")
+    return path
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--runtime", choices=["compose", "k8s"], default="compose")
     parser.add_argument("--profile", default="severe_drift", choices=["stable", "drifted", "severe_drift"])
+    parser.add_argument("--model", default=None, help="Override model (kind default: churn-predictor). Use a dedicated model for n≥3 so the published champion does not walk.")
+    parser.add_argument("--repeats", type=int, default=1, help="Repeat the A/B/C cell. Writes *_repeats.json and does not overwrite the published Table 3 file.")
+    parser.add_argument("--overwrite-published", action="store_true", help="Allow replacing approach_comparison_{profile}[_kind].json (the Table 3 source).")
     args = parser.parse_args()
 
-    target = Target(args.runtime)
+    target = Target(args.runtime, model=args.model)
     assert requests.get(f"{target.backend}/ready", timeout=5).json().get("ready"), "backend not ready"
 
     scenario = KIND_PROFILE_TO_SCENARIO[args.profile] if args.runtime == "k8s" else "feature_drift"
-    report = {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
-        "runtime": args.runtime,
-        "profile": args.profile,
-        "scenario": scenario,
-        "model": target.model,
-        "backend": target.backend,
-        "methodology_note": (
-            "All three approaches use the same 16-stage training pipeline. "
-            + (
-                f"Kind window: generator scenario='{scenario}' (profile {args.profile} mapped). "
-                "Approach C uses POST /joint-retrain; A polls GET /joint-cell."
-                if args.runtime == "k8s"
-                else "Compose window: scenario='feature_drift'; A/C use POST /monitoring/check."
-            )
-        ),
-        "approach_c": run_approach_c(target, args.profile, scenario),
-        "approach_b": run_approach_b(target, scenario),
-        "approach_a": run_approach_a(target, args.profile, scenario),
-    }
-    RESULTS_DIR.mkdir(exist_ok=True)
-    suffix = f"{args.profile}_kind.json" if args.runtime == "k8s" else f"{args.profile}.json"
-    out_path = RESULTS_DIR / f"approach_comparison_{suffix}"
-    out_path.write_text(json.dumps(report, indent=2, default=str))
-    print(f"Wrote {out_path}")
+    published = RESULTS_DIR / (
+        f"approach_comparison_{args.profile}_kind.json" if args.runtime == "k8s" else f"approach_comparison_{args.profile}.json"
+    )
+
+    if args.repeats > 1:
+        trials = [_one_matrix_cell(target, args.profile, scenario) for _ in range(args.repeats)]
+        payload = {
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "runtime": args.runtime,
+            "profile": args.profile,
+            "scenario": scenario,
+            "model": target.model,
+            "repeats": args.repeats,
+            "champion_walked_any": any(t.get("champion_walked") for t in trials),
+            "trials": trials,
+        }
+        suffix = f"{args.profile}_kind_repeats.json" if args.runtime == "k8s" else f"{args.profile}_repeats.json"
+        _write_report(RESULTS_DIR / f"approach_comparison_{suffix}", payload)
+        print(json.dumps(payload, indent=2, default=str))
+        return
+
+    report = _one_matrix_cell(target, args.profile, scenario)
+    if published.exists() and not args.overwrite_published:
+        alt = published.with_name(published.stem + "_run.json")
+        _write_report(alt, report)
+        print(f"left published Table 3 file untouched: {published}")
+    else:
+        _write_report(published, report)
     print(json.dumps(report, indent=2, default=str))
 
 
