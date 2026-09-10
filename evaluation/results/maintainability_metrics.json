@@ -1,7 +1,52 @@
 {
   "code_churn": {
-    "available": false,
-    "note": "no VCS history in this project (`git log` failed: 'fatal: not a git repository (or any of the parent directories): .git') \u2014 code churn (Nagappan & Ball, ref [14]) cannot be computed without commit history and is reported as N/A, not estimated. Cyclomatic complexity and LOC below do not depend on VCS history."
+    "available": true,
+    "commit_count": 5,
+    "commits": [
+      "030af46 Add a kind-cluster evaluation window and name evaluation/results as the data folder.",
+      "9a59feb Merge pull request #1 from rcramu/feat/reproducibility-package",
+      "9bca4fc Add a measured graphical abstract for the JSS submission pack.",
+      "4d83891 Add the archived Compose snapshot and evaluation harness.",
+      "81f09f3 Initialize the public companion repository."
+    ],
+    "by_module": {
+      "backend/app/ml": {
+        "path": "backend/app/ml",
+        "files_touched": 7,
+        "lines_added": 274,
+        "lines_deleted": 0,
+        "churn": 274
+      },
+      "backend/app/routers": {
+        "path": "backend/app/routers",
+        "files_touched": 11,
+        "lines_added": 499,
+        "lines_deleted": 0,
+        "churn": 499
+      },
+      "backend/app/integrations": {
+        "path": "backend/app/integrations",
+        "files_touched": 6,
+        "lines_added": 241,
+        "lines_deleted": 0,
+        "churn": 241
+      },
+      "airflow/dags": {
+        "path": "airflow/dags",
+        "files_touched": 3,
+        "lines_added": 239,
+        "lines_deleted": 0,
+        "churn": 239
+      },
+      "evaluation": {
+        "path": "evaluation",
+        "files_touched": 29,
+        "lines_added": 4289,
+        "lines_deleted": 302,
+        "churn": 4591
+      }
+    },
+    "note": "Short-window churn on this public deposit only (history starts at the archive commit). Not a multi-year industrial churn study."
   },
   "modules": {
     "backend/app/ml": {

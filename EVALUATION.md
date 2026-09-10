@@ -53,4 +53,4 @@ Do not overwrite `evaluation/results/fault_injection.json` or `approach_comparis
 
 ## Known limitations
 
-Code churn was unavailable at the original Compose measurement (no VCS). Kind A/B/C cells are n=1 per scenario. Kind backend self-heal is measured against a 30 s `/ready` bound, not “the Deployment eventually created a pod.”
+Code churn is now a short-window measurement over this deposit's git history (`maintainability_metrics.json`): SUT modules are archive-commit additions only; later churn is concentrated in `evaluation/`. Kind A/B/C cells are n=1 per scenario. Kind backend self-heal is measured against a 30 s `/ready` bound, not “the Deployment eventually created a pod.”
