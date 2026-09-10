@@ -43,7 +43,7 @@ Published Table 3 files (`approach_comparison_{profile}_kind.json`) are not over
 evaluation/.venv/bin/python evaluation/approach_comparison.py --runtime k8s --model paper-b-abc --profile drifted --repeats 3
 ```
 
-That writes `approach_comparison_{profile}_kind_repeats.json`. Bring the kind cluster up from Paper A's `code/k8s/deploy-local-eks.sh` first. Every kubectl call stays on `--context kind-dact-local-eks`.
+Create the dedicated model first (`evaluation/ensure_kind_model.py --model paper-b-abc`); there is no POST /models route. That writes `approach_comparison_{profile}_kind_repeats.json`. Kind idle-in-transaction observe-only: `evaluation/orphan_observe.py --trials 5` → `orphan_kind.json` (does not overwrite Table 1). Every kubectl call stays on `--context kind-dact-local-eks`.
 
 ## Compose (archived snapshot)
 
